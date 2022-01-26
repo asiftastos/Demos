@@ -1,0 +1,3 @@
+[submodule "libs\\lgl"]
+	path = libs\\lgl
+	url = https://github.com/asiftastos/lgl.git
