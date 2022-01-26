@@ -8,7 +8,9 @@
 */
 #include "lgl.h"
 #include "GLFW/glfw3.h"
+#define STB_RECT_PACK_IMPLEMENTATION
 #include "stb_rect_pack.h"
+#define STB_TRUETYPE_IMPLEMENTATION
 #include "stb_truetype.h"
 
 typedef struct VertexTexture
