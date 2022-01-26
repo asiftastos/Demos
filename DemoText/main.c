@@ -83,7 +83,7 @@ static mat4s proj;
 static void loadSDF()
 {
     unsigned char* buffer = NULL;
-    FILE* f = fopen("assets/fonts/Roboto-Regular.ttf", "rb");
+    FILE* f = fopen("Roboto-Regular.ttf", "rb");
     assert(f != NULL);
     fseek(f, 0, SEEK_END);
     uint64_t len = ftell(f);
@@ -230,7 +230,7 @@ static void drawSDF()
     shaderUploadMatrix(sdfShader, "proj", proj);
     textureSet(sdfTexture);
     glDrawElements(GL_TRIANGLES, indicesCount, GL_UNSIGNED_SHORT, NULL);
-    glBindVertexArray(0);
+    //glBindVertexArray(0);
 
     vec_clear(&textBuffer);
     vec_clear(&textIndices);
@@ -251,7 +251,7 @@ void demoInit()
 
     loadSDF();
     initSDF();
-    sdfShader = shaderCreate("assets/shaders/demotext.vert", "assets/shaders/demosdf.frag");
+    sdfShader = shaderCreate("demotext.vert", "demosdf.frag");
     shaderUse(sdfShader);
     shaderSetupUniforms(sdfShader, 2, (const char*[]){"model", "proj"});
     

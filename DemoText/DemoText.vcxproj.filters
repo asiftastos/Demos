@@ -21,5 +21,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="..\assets\shaders\demosdf.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\assets\shaders\demotext.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\assets\fonts\Roboto-Regular.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
 </Project>
