@@ -6,7 +6,7 @@
         [ ] Letters drawn have big spaces between them
     [ ] rect_pack is not used
 */
-#include "demo.h"
+#include "lgl.h"
 #include "vec.h"
 #include "stb_rect_pack.h"
 #include "stb_truetype.h"
@@ -28,7 +28,7 @@ typedef struct TextElem
 }TextElem;
 
 
-static Demo* d = NULL;
+static LGLContext* ctx = NULL;
 static stbtt_packedchar* charinfo = NULL;
 
 #pragma region ====================  SDF  =================================
