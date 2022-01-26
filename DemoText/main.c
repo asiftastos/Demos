@@ -7,7 +7,7 @@
     [ ] rect_pack is not used
 */
 #include "lgl.h"
-#include "vec.h"
+#include "GLFW/glfw3.h"
 #include "stb_rect_pack.h"
 #include "stb_truetype.h"
 
@@ -242,10 +242,10 @@ static void drawSDF()
 void demoInit()
 {
     printf("Demotext initialized\n");
-    glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 
     //glm_translate(model, (vec3){10.0f, 10.0f, 0.0f});
-    proj = glms_ortho(0.0f, d->fbSize.x, 0.0f, d->fbSize.y, 0.1f, 100.0f);
+    vec2s size = lglCurrentSize();
+    proj = glms_ortho(0.0f, size.x, 0.0f, size.y, 0.1f, 100.0f);
 
     loadSDF();
     initSDF();
@@ -276,8 +276,8 @@ void demoTerminate()
 
 void demoUpdate()
 {
-    if(d->keys[GLFW_KEY_ESCAPE].pressed)
-        glfwSetWindowShouldClose(d->window, GLFW_TRUE);
+    if (lglIsKeyPressed(GLFW_KEY_ESCAPE))
+        lglClose();
 }
 
 void demoRender()
@@ -293,16 +293,33 @@ void demoRender()
 
 int main(void)
 {
-    d = demoCreate((DemoParams){
-        .windowSize = (vec2s){{1280, 960}},
+    ctx = lglCreateContext((LGLParams) {
+        .fullscreen = false,
         .title = "Demo Text Rendering",
-        .fInit = demoInit,
-        .fTerminate = demoTerminate,
-        .fUpdate = demoUpdate,
-        .fRender = demoRender,
-        .fullscreen = false
+        .windowSize = (vec2s){{1280, 960}}
     });
-    demoRun();
-    demoDestroy();
+
+    demoInit();
+
+    vec4s clearColor = (vec4s){ {0.0f, 0.0f, 0.0f, 1.0f} };
+    float depth = 1.0f;
+
+    while (lglIsRunning())
+    {
+        lglUpdateInput();
+
+        demoUpdate();
+
+        glClearBufferfv(GL_COLOR_BUFFER_BIT, 0, clearColor.raw);
+        glClearBufferfv(GL_DEPTH_BUFFER_BIT, 0, &depth);
+
+        demoRender();
+
+        lglSwapAndPoll();
+    }
+
+    demoTerminate();
+
+    lglDestroyContext(ctx);
     return 0;
 }
