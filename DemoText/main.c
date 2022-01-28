@@ -312,8 +312,8 @@ int main(void)
 
         demoUpdate();
 
-        glClearBufferfv(GL_COLOR_BUFFER_BIT, 0, clearColor.raw);
-        glClearBufferfv(GL_DEPTH_BUFFER_BIT, 0, &depth);
+        glClearBufferfv(GL_COLOR, 0, clearColor.raw);
+        glClearBufferfv(GL_DEPTH, 0, &depth);
 
         demoRender();
 
