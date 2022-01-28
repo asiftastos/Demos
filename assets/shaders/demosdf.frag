@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 precision mediump float;
 
 in vec2 uv0;
@@ -13,5 +13,5 @@ void main()
 {
     float distance = texture(mytexture, uv0).r;
     float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, distance);
-    FragColor = vec4(0.0f, 0.0f, 0.0f, alpha);
+    FragColor = vec4(1.0f, 1.0f, 1.0f, alpha);
 }
