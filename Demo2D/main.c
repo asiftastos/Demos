@@ -1,14 +1,15 @@
+#define DEMO_COMMON_IMPLEMENTATION
 #include "demo.h"
-#include "demoui.h"
+//#include "demoui.h"
 
 typedef void (*PanelAction)();
 
 typedef struct Panel
 {
-    vec2s position;
-    vec2s size;
+    vec2 position;
+    vec2 size;
     float alphas[3];
-    vec3s colors[3];
+    vec3 colors[3];
     int color;
     int alpha;
     VertexBuffer* vbo;
@@ -17,31 +18,31 @@ typedef struct Panel
 }Panel;
 
 static Demo* d = NULL;
-static Demoui* dui = NULL;
+//static Demoui* dui = NULL;
 static Shader* simple = NULL;
 static VertexArray* vao = NULL;
-static mat4s model;
-static mat4s proj;
+static mat4 model;
+static mat4 proj;
 static Panel panel;
 
 static void panelCreate()
 {
-    panel.position = (vec2s){{10.0f, 10.0f}};
-    panel.size = (vec2s){{ 100.0f, 50.0f }};
+    glm_vec2((vec2){10.0f, 10.0f}, panel.position);
+    glm_vec2((vec2){ 100.0f, 50.0f }, panel.size);
     panel.alpha = 0;
     panel.alphas[0] = 0.2f;
     panel.alphas[1] = 0.8f;
     panel.alphas[2] = 0.9f;
     panel.color = 0;
-    panel.colors[0] = (vec3s){{1.0f, 0.0f, 0.0f}};
-    panel.colors[1] = (vec3s){{0.0f, 1.0f, 0.0f}};
-    panel.colors[2] = (vec3s){{0.0f, 0.0f, 1.0f}};
+    glm_vec3((vec3){1.0f, 0.0f, 0.0f}, panel.colors[0]);
+    glm_vec3((vec3){0.0f, 1.0f, 0.0f}, panel.colors[1]);
+    glm_vec3((vec3){0.0f, 0.0f, 1.0f}, panel.colors[2]);
     panel.clickedDelay = 0.0f;
     
     float xmin = 0.0f;
-    float xmax = panel.size.x;
+    float xmax = panel.size[0];
     float ymin = 0.0f;
-    float ymax = panel.size.y;
+    float ymax = panel.size[1];
 
     const float vertbuffer[] = 
     {
@@ -216,7 +217,7 @@ void render()
 int main(void)
 {
     d = demoCreate((DemoParams){
-        .windowSize = (vec2s){{1280, 960}},
+        .windowSize = (vec2){1280, 960},
         .title = "Demo 2D",
         .fInit = init,
         .fTerminate = terminate,
