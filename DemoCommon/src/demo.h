@@ -19,9 +19,9 @@ typedef struct DemoParams
 	char title[128];
 }DemoParams;
 
-Demo* DemoCreate(DemoParams params);
-void DemoRun();
-void DemoTerminate();
+Demo* DemoCreate(DemoParams* params);
+void DemoRun(Demo* d);
+void DemoTerminate(Demo* d);
 
 #endif // !DEMO_COMMON_HEADER_H
 
@@ -29,30 +29,42 @@ void DemoTerminate();
 
 #include <stdlib.h>
 #include <assert.h>
+#define THAUM_WINDOW_IMPLEMENTATION
+#include "src/thmWindow.h"
 
 typedef struct Demo
 {
-	DemoParams params;
+	DemoParams* params;
+	ThmWindowContext* thmWindowContext;
 }Demo;
 
-Demo* DemoCreate(DemoParams params)
+Demo* DemoCreate(DemoParams* params)
 {
 	Demo* d = (Demo*)malloc(sizeof(Demo));
 	assert(d);
 
 	d->params = params;
 
+	ThmWindowParams winParams;
+	winParams.fullscreen = params->fullscreen;
+	glm_vec2(params->windowSize, winParams.windowSize);
+	strcpy(winParams.title, params->title);
+	d->thmWindowContext = thmCreateContext(winParams);
+
 	return d;
 }
 
-void DemoRun()
+void DemoRun(Demo* d)
 {
 
 }
 
-void DemoTerminate()
+void DemoTerminate(Demo* d)
 {
+	d->params->fDestroy();
 
+	if (d->thmWindowContext)
+		thmDestroyContext(d->thmWindowContext);
 }
 
 #endif // DEMO_COMMON_IMPLEMENTATION

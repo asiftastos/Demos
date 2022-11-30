@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DemoMicroui", "DemoMicroui\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DemoCommon", "DemoCommon\DemoCommon.vcxitems", "{00CA7B48-E215-47B7-AAAC-355367538B6C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thuam", "libs\lgl\thuam\thuam.vcxitems", "{B5747E8B-0721-4155-B41F-3AFA76D72188}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -103,5 +105,7 @@ Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		DemoCommon\DemoCommon.vcxitems*{00ca7b48-e215-47b7-aaac-355367538b6c}*SharedItemsImports = 9
 		DemoCommon\DemoCommon.vcxitems*{5a03c560-1346-4d44-a9b0-0b154ff283e5}*SharedItemsImports = 4
+		libs\lgl\thuam\thuam.vcxitems*{5a03c560-1346-4d44-a9b0-0b154ff283e5}*SharedItemsImports = 4
+		libs\lgl\thuam\thuam.vcxitems*{b5747e8b-0721-4155-b41f-3afa76d72188}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

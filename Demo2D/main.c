@@ -1,5 +1,13 @@
+#include <string.h>
+#include "glad.h"
 #define DEMO_COMMON_IMPLEMENTATION
 #include "demo.h"
+#define THAUM_SHADER_IMPLEMENTATION
+#include "src/assets/shader.h"
+#define THAUM_VARRAY_IMPLEMENTATION
+#include "src/graphics/varray.h"
+#define THAUM_VBUFFER_IMPLEMENTATION
+#include "src/graphics/vbuffer.h"
 //#include "demoui.h"
 
 typedef void (*PanelAction)();
@@ -74,11 +82,11 @@ static void panelCreate()
 
 static bool panelHover()
 {
-    float xmax = panel.position.x + panel.size.x;
-    float ymax = panel.position.y + panel.size.y;
-    float mx = d->mouse.position.x;
-    float my = d->mouse.position.y;
-    return mx > panel.position.x && mx < xmax && my > panel.position.y && my < ymax;
+    float xmax = panel.position[0] + panel.size[0];
+    float ymax = panel.position[1] + panel.size[1];
+    float mx = d->mouse.position[0];
+    float my = d->mouse.position[1];
+    return mx > panel.position[0] && mx < xmax&& my > panel.position[1] && my < ymax;
 }
 
 static void OnPanelClicked()
@@ -88,11 +96,12 @@ static void OnPanelClicked()
 
 static bool checkboxfps = false;
 
+/*
 static void toolUIDraw()
 {
     tuiBeginFrame(dui->toolState);
 
-    if(tuiBeginWindow("Stats", (vec4s){{0.0f, 150.0f, 200.0f, 200.0f}}, 0))
+    if(tuiBeginWindow("Stats", (vec4){0.0f, 150.0f, 200.0f, 200.0f}, 0))
     {
         tuiLabel("FPS:");
         tuiLabel("New");
@@ -108,10 +117,11 @@ static void toolUIDraw()
 
     tuiEndFrame(dui->toolState);
 }
+*/
 
 void onResize(int width, int height)
 {
-    proj = glms_ortho(0.0f, width, height, 0.0f, 0.1f, 100.0f);
+    glm_ortho(0.0f, width, height, 0.0f, 0.1f, 100.0f, proj);
 }
 
 void init()
@@ -121,28 +131,28 @@ void init()
     d->onResize = onResize;
     
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    simple = shaderCreate("assets/shaders/simple2d.vert", "assets/shaders/simple2d.frag");
-    shaderUse(simple);
-    shaderSetupUniforms(simple, 4, (const char*[]){"color", "model", "proj", "alpha"});
+    simple = thmShaderCreate("assets/shaders/simple2d.vert", "assets/shaders/simple2d.frag");
+    thmShaderUse(simple);
+    thmShaderSetupUniforms(simple, 4, (const char*[]){"color", "model", "proj", "alpha"});
     glUseProgram(0);
 
     panelCreate();
     panel.clicked = OnPanelClicked;
     
-    model = glms_mat4_identity();
-    model = glms_translate_make((vec3s){{panel.position.x, panel.position.y, -1.0f}});
-    proj = glms_mat4_identity();
-    proj = glms_ortho(0.0f, d->fbSize.x, d->fbSize.y, 0.0f, 0.1f, 100.0f);
+    glm_mat4_identity(model);
+    glm_translate_make(model, (vec3){panel.position[0], panel.position[1], -1.0f });
+    glm_mat4_identity(proj);
+    glm_ortho(0.0f, d->fbSize.x, d->fbSize.y, 0.0f, 0.1f, 100.0f, proj);
 
     dui = demouiInit(d);
 }
 
 void terminate()
 {
-    demouiTerminate();
-    lglVertexBufferDestroy(panel.vbo);
-    lglVertexArrayDestroy(vao);
-    shaderDestroy(simple);
+    //demouiTerminate();
+    thmVBufferDestroy(panel.vbo);
+    thmVArrayDestroy(vao);
+    thmShaderDestroy(simple);
     printf("Demo2d terminated\n");
 }
 
@@ -216,15 +226,16 @@ void render()
 
 int main(void)
 {
-    d = demoCreate((DemoParams){
-        .windowSize = (vec2){1280, 960},
-        .title = "Demo 2D",
-        .fInit = init,
-        .fTerminate = terminate,
-        .fUpdate = update,
-        .fRender = render,
-        .fullscreen = false
-    });
+    DemoParams params;
+    strcpy(params.title, "Demo 2D");
+    params.fInit = init;
+    params.fUpdate = update;
+    params.fRender = render;
+    params.fDestroy = terminate;
+    params.fullscreen = false;
+    glm_vec2((vec2) { 1280, 960 }, params.windowSize);
+
+    d = demoCreate(&params);
     demoRun();
     demoDestroy();
 
