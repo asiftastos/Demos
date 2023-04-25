@@ -3,12 +3,11 @@
 #define DEMO_COMMON_IMPLEMENTATION
 #include "demo.h"
 #define THAUM_SHADER_IMPLEMENTATION
-#include "src/assets/shader.h"
+#include "assets/shader.h"
 #define THAUM_VARRAY_IMPLEMENTATION
-#include "src/graphics/varray.h"
+#include "assets/varray.h"
 #define THAUM_VBUFFER_IMPLEMENTATION
-#include "src/graphics/vbuffer.h"
-//#include "demoui.h"
+#include "assets/vbuffer.h"
 
 typedef void (*PanelAction)();
 

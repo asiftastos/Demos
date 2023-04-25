@@ -10,19 +10,8 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\lgl\libs\glad\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\libs\lgl\libs\glad\glad.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libs\lgl\libs\glad\khrplatform.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
