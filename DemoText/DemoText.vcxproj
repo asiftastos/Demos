@@ -170,12 +170,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libs\lgl\lgl.vcxproj">
-      <Project>{6e4c1d40-bc55-4b64-ab17-53751a445c89}</Project>
-      <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="..\assets\fonts\Roboto-Regular.ttf">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </Font>

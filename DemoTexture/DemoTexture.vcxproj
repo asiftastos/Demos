@@ -157,14 +157,6 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libs\lgl\lgl.vcxproj">
-      <Project>{6e4c1d40-bc55-4b64-ab17-53751a445c89}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\libs\lgl\libs\cglm\win\cglm.vcxproj">
-      <Project>{ca8bcaf9-cd25-4133-8f62-3d1449b5d2fc}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\assets\shaders\demotext.vert">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </None>

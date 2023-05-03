@@ -1,8 +1,10 @@
 #ifndef DEMO_COMMON_HEADER_H
 #define DEMO_COMMON_HEADER_H
 
+#include <stdlib.h>
+#include <assert.h>
 #include <stdbool.h>
-#include "cglm/cglm.h"
+#include "HandmadeMath.h"
 
 typedef void (*DemoFunc)();
 
@@ -10,7 +12,7 @@ typedef struct Demo Demo;
 
 typedef struct DemoParams
 {
-	vec2 windowSize;
+	HMM_Vec2 prefferedWindowSize;
 	bool fullscreen;
 	DemoFunc fInit;
 	DemoFunc fUpdate;
@@ -21,21 +23,15 @@ typedef struct DemoParams
 
 Demo* DemoCreate(DemoParams* params);
 void DemoRun(Demo* d);
-void DemoTerminate(Demo* d);
 
 #endif // !DEMO_COMMON_HEADER_H
 
 #ifdef DEMO_COMMON_IMPLEMENTATION
 
-#include <stdlib.h>
-#include <assert.h>
-#define THAUM_WINDOW_IMPLEMENTATION
-#include "src/thmWindow.h"
-
 typedef struct Demo
 {
 	DemoParams* params;
-	ThmWindowContext* thmWindowContext;
+	bool running;
 }Demo;
 
 Demo* DemoCreate(DemoParams* params)
@@ -44,27 +40,27 @@ Demo* DemoCreate(DemoParams* params)
 	assert(d);
 
 	d->params = params;
-
-	ThmWindowParams winParams;
-	winParams.fullscreen = params->fullscreen;
-	glm_vec2(params->windowSize, winParams.windowSize);
-	strcpy(winParams.title, params->title);
-	d->thmWindowContext = thmCreateContext(winParams);
+	d->running = false;
 
 	return d;
 }
 
-void DemoRun(Demo* d)
-{
-
-}
-
-void DemoTerminate(Demo* d)
+static void DemoTerminate(Demo* d)
 {
 	d->params->fDestroy();
+}
 
-	if (d->thmWindowContext)
-		thmDestroyContext(d->thmWindowContext);
+void DemoRun(Demo* d)
+{
+	d->params->fInit();
+
+	while (d->running)
+	{
+		d->params->fUpdate();
+		d->params->fRender();
+	}
+
+	DemoTerminate(d);
 }
 
 #endif // DEMO_COMMON_IMPLEMENTATION

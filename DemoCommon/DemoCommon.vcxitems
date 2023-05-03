@@ -14,9 +14,9 @@
     <ProjectCapability Include="SourceItemsFromImports" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\libs\HandmadeMath\HandmadeMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\demo.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\glad.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)src\HandmadeMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)src\khrplatform.h" />
   </ItemGroup>
   <ItemGroup>
