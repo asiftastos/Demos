@@ -5,9 +5,24 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demos", "Demos", "{93E02290-32A2-4870-B835-D5BB4DFE4847}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bitfields", "projects\Bitfields\Bitfields.vcxproj", "{2A0BFE80-582E-4446-80F2-567A3F7AB18A}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A0BFE80-582E-4446-80F2-567A3F7AB18A}.Debug|x64.ActiveCfg = Debug|x64
+		{2A0BFE80-582E-4446-80F2-567A3F7AB18A}.Debug|x64.Build.0 = Debug|x64
+		{2A0BFE80-582E-4446-80F2-567A3F7AB18A}.Release|x64.ActiveCfg = Release|x64
+		{2A0BFE80-582E-4446-80F2-567A3F7AB18A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A0BFE80-582E-4446-80F2-567A3F7AB18A} = {93E02290-32A2-4870-B835-D5BB4DFE4847}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6325B827-686E-4127-9DE9-8C11C01FA61C}
