@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\demo.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\dmWindow.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\glad.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\HandmadeMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\khrplatform.h" />

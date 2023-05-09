@@ -3,45 +3,35 @@
 */
 
 #include <stdio.h>
-#include <stdbool.h>
-#include <SDL.h>
-
-typedef struct Demo {
-	SDL_Window* window;
-	bool running;
-}Demo;
+#define DM_WINDOW_IMPLEMENTATION
+#include <dmWindow.h>
 
 int main(int argc, const char** argv)
 {
-	Demo d;
+	DmWindow dw;
+	DmWindowParams dparams = { "SDL Window", 1024, 768 };
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		const char* errormsg = SDL_GetError();
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR ,"[ERROR]: %s\n", errormsg);
+	if (initWindow(&dparams, &dw) > 0)
 		return 1;
-	}
-	SDL_Log("SDL2 initialized!!\n");
 
-	d.window = SDL_CreateWindow("SDL Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_RESIZABLE);
-	if (!d.window)
-	{
-		const char* errormsg = SDL_GetError();
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: %s\n", errormsg);
-		SDL_Quit();
-		return 1;
-	}
+	/*	SYSTEM INFO */
+	int cpus = SDL_GetCPUCount();
+	int ram = SDL_GetSystemRAM();
+	SDL_Log("CPUs: %d\tRAM: %d MB", cpus, ram);
+	
+	/*	FILESYSTEM INFO  */
+	SDL_Log("Working Dir: %s\n", SDL_GetBasePath());
 
-	d.running = true;
-	while (d.running)
+	SDL_Event e = { 0 };
+	dw.running = true;
+	while (dw.running)
 	{
-		SDL_Event e;
 		while (SDL_PollEvent(&e))
 		{
 			switch (e.type)
 			{
 			case SDL_QUIT:
-				d.running = false;
+				dw.running = false;
 				break;
 			default:
 				break;
@@ -49,8 +39,7 @@ int main(int argc, const char** argv)
 		}
 	}
 
-	SDL_DestroyWindow(d.window);
-	SDL_Quit();
-	SDL_Log("SDL2 quit!!\n");
+	quitWindow(&dw);
+
 	return 0;
 }
