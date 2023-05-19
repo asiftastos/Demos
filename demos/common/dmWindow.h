@@ -40,6 +40,21 @@ int initWindow(DmWindowParams* params, DmWindow* dmW)
 		SDL_Quit();
 		return 1;
 	}
+	SDL_Log("SDL2 window created!\n");
+
+	int vidDrvCount = SDL_GetNumVideoDrivers();
+	SDL_Log("Video drivers: %d\n", vidDrvCount);
+	for (int i = 0; i < vidDrvCount; i++)
+	{
+		SDL_Log("[%d]: %s\n", i, SDL_GetVideoDriver(i));
+	}
+
+	int vidDisplaysCount = SDL_GetNumVideoDisplays();
+	SDL_Log("Video displays: %d\n", vidDisplaysCount);
+	for (int i = 0; i < vidDisplaysCount; i++)
+	{
+		SDL_Log("[%d]: %s\n", i, SDL_GetDisplayName(i));
+	}
 
 	return 0;
 }
