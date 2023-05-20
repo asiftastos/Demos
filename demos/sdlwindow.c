@@ -6,9 +6,16 @@
 #define DM_WINDOW_IMPLEMENTATION
 #include <dmWindow.h>
 
+DmWindow dw;
+
+void handleKeyboard(SDL_KeyboardEvent *ev)
+{
+	if (ev->keysym.sym == SDLK_ESCAPE)
+		dw.running = false;
+}
+
 int main(int argc, const char** argv)
 {
-	DmWindow dw;
 	DmWindowParams dparams = { "SDL Window", 1024, 768 };
 
 	if (initWindow(&dparams, &dw) > 0)
@@ -32,6 +39,9 @@ int main(int argc, const char** argv)
 			{
 			case SDL_QUIT:
 				dw.running = false;
+				break;
+			case SDL_KEYDOWN:
+				handleKeyboard(&e);
 				break;
 			default:
 				break;
