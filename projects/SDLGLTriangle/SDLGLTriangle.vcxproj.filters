@@ -10,5 +10,8 @@
     <ClCompile Include="..\..\demos\opengl\sdlgltriangle.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\demos\common\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

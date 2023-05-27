@@ -5,6 +5,8 @@
 #include <stdio.h>
 #define DM_WINDOW_IMPLEMENTATION
 #include <dmWindow.h>
+#define DM_RENDERER_IMPLEMENTATION
+#include <dmRenderer.h>
 
 DmWindow dw;
 
@@ -21,13 +23,11 @@ int main(int argc, const char** argv)
 	if (initWindow(&dparams, &dw) > 0)
 		return 1;
 
-	/*	SYSTEM INFO */
-	int cpus = SDL_GetCPUCount();
-	int ram = SDL_GetSystemRAM();
-	SDL_Log("CPUs: %d\tRAM: %d MB", cpus, ram);
+	initRenderer(&dw);
 
-	/*	FILESYSTEM INFO  */
-	SDL_Log("Working Dir: %s\n", SDL_GetBasePath());
+	SDL_GL_SetSwapInterval(1);
+
+	glClearColor(0.0f, 0.0f, 0.8f, 1.0f);
 
 	SDL_Event e = { 0 };
 	dw.running = true;
@@ -47,8 +47,13 @@ int main(int argc, const char** argv)
 				break;
 			}
 		}
+
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		SDL_GL_SwapWindow(dw.window);
 	}
 
+	destroyRenderer();
 	quitWindow(&dw);
 
 	return 0;
