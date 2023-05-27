@@ -6,10 +6,17 @@
 #include <stdbool.h>
 #include <SDL.h>
 
+typedef enum DmGraphicsApi {
+	NOAPI,
+	OPENGL,
+	VULKAN
+}DmGraphicsApi;
+
 typedef struct DmWindowParams {
 	char* title;
 	int width;
 	int height;
+	DmGraphicsApi api;
 }DmWindowParams;
 
 typedef struct DmWindow {
@@ -32,7 +39,16 @@ int initWindow(DmWindowParams* params, DmWindow* dmW)
 	}
 	SDL_Log("SDL2 initialized!!\n");
 
-	dmW->window = SDL_CreateWindow(params->title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, params->width, params->height, SDL_WINDOW_RESIZABLE);
+	Uint32 windowFlags = SDL_WINDOW_RESIZABLE;
+	if (params->api == OPENGL) {
+		windowFlags |= SDL_WINDOW_OPENGL;
+	}
+	else if(params->api == VULKAN)
+	{
+		windowFlags |= SDL_WINDOW_VULKAN;
+	}
+
+	dmW->window = SDL_CreateWindow(params->title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, params->width, params->height, windowFlags);
 	if (!dmW->window)
 	{
 		const char* errormsg = SDL_GetError();

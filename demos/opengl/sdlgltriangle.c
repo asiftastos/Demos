@@ -1,5 +1,5 @@
 /*
-*	SDL Window Demo
+*	SDL OpenGL Triangle Demo
 */
 
 #include <stdio.h>
@@ -8,7 +8,7 @@
 
 DmWindow dw;
 
-void handleKeyboard(SDL_KeyboardEvent *ev)
+void handleKeyboard(SDL_KeyboardEvent* ev)
 {
 	if (ev->keysym.sym == SDLK_ESCAPE)
 		dw.running = false;
@@ -16,7 +16,7 @@ void handleKeyboard(SDL_KeyboardEvent *ev)
 
 int main(int argc, const char** argv)
 {
-	DmWindowParams dparams = { "SDL Window", 1024, 768, NOAPI };
+	DmWindowParams dparams = { "SDL Window", 1024, 768, OPENGL };
 
 	if (initWindow(&dparams, &dw) > 0)
 		return 1;
@@ -25,7 +25,7 @@ int main(int argc, const char** argv)
 	int cpus = SDL_GetCPUCount();
 	int ram = SDL_GetSystemRAM();
 	SDL_Log("CPUs: %d\tRAM: %d MB", cpus, ram);
-	
+
 	/*	FILESYSTEM INFO  */
 	SDL_Log("Working Dir: %s\n", SDL_GetBasePath());
 

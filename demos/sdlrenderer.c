@@ -17,7 +17,7 @@ void handleKeyboard(SDL_KeyboardEvent* ev)
 
 int main(int argc, const char** argv)
 {
-	DmWindowParams dparams = { "SDL Renderer", 1280, 900 };
+	DmWindowParams dparams = { "SDL Renderer", 1280, 900, NOAPI };
 
 	if (initWindow(&dparams, &dw) > 0)
 		return 1;

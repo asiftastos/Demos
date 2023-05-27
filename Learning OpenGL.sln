@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLWindow", "projects\SDLWi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLRenderer", "projects\SDLRenderer\SDLRenderer.vcxproj", "{C2FA17D5-30F3-4901-B3EF-7C71D4ED14AA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLGLTriangle", "projects\SDLGLTriangle\SDLGLTriangle.vcxproj", "{072E3716-DAEE-475A-BD45-233182F19C02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,10 @@ Global
 		{C2FA17D5-30F3-4901-B3EF-7C71D4ED14AA}.Debug|x64.Build.0 = Debug|x64
 		{C2FA17D5-30F3-4901-B3EF-7C71D4ED14AA}.Release|x64.ActiveCfg = Release|x64
 		{C2FA17D5-30F3-4901-B3EF-7C71D4ED14AA}.Release|x64.Build.0 = Release|x64
+		{072E3716-DAEE-475A-BD45-233182F19C02}.Debug|x64.ActiveCfg = Debug|x64
+		{072E3716-DAEE-475A-BD45-233182F19C02}.Debug|x64.Build.0 = Debug|x64
+		{072E3716-DAEE-475A-BD45-233182F19C02}.Release|x64.ActiveCfg = Release|x64
+		{072E3716-DAEE-475A-BD45-233182F19C02}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -40,6 +46,7 @@ Global
 		{6CF7CE01-9242-411C-A07C-8339E15B5EE5} = {93E02290-32A2-4870-B835-D5BB4DFE4847}
 		{7CA6D760-E2E7-4F3A-8FA7-F1C07BB8EFDC} = {93E02290-32A2-4870-B835-D5BB4DFE4847}
 		{C2FA17D5-30F3-4901-B3EF-7C71D4ED14AA} = {93E02290-32A2-4870-B835-D5BB4DFE4847}
+		{072E3716-DAEE-475A-BD45-233182F19C02} = {93E02290-32A2-4870-B835-D5BB4DFE4847}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6325B827-686E-4127-9DE9-8C11C01FA61C}
