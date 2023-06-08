@@ -10,6 +10,9 @@
 #define DM_ASSETS_IMPLEMENTATION
 #include <dmAssets.h>
 
+int windowWidth = 1024;
+int windowHeight = 768;
+
 DmWindow dw;
 DMRenderer* renderer;
 GLuint vao;
@@ -17,87 +20,15 @@ GLuint vbo;
 GLuint ibo;
 GLuint shader;
 
-GLuint loadShader(const char* filename, int shaderType)
-{
-	GLuint id = 0;
-
-	int length = 0;
-	char* src = loadFileText(filename, &length);
-
-	if (src != NULL)
-	{
-		id = glCreateShader(shaderType);
-		glShaderSource(id, 1, &src, NULL);
-		glCompileShader(id);
-		freeText(src);
-
-		GLint status = GL_TRUE;
-		glGetShaderiv(id, GL_COMPILE_STATUS, &status);
-		
-		if (status == GL_FALSE)
-		{
-			int infolength = 0;
-			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &infolength);
-
-			char* infolog = (char*)calloc(infolength, sizeof(char));
-			glGetShaderInfoLog(id, infolength, NULL, infolog);
-
-			SDL_Log("Shader compile error [%s]: %s\n", filename, infolog);
-			free(infolog);
-
-			id = 0;
-		}
-	}
-
-	return id;
-}
-
-GLuint createProgram(GLuint vsh, GLuint fsh, const char* name)
-{
-	GLuint id = 0;
-
-	if (vsh > 0 && fsh > 0)
-	{
-		id = glCreateProgram();
-
-		glAttachShader(id, vsh);
-		glAttachShader(id, fsh);
-
-		glLinkProgram(id);
-
-		GLint status = GL_TRUE;
-		glGetProgramiv(id, GL_LINK_STATUS, &status);
-
-		if (status == GL_FALSE)
-		{
-			int infolength = 0;
-			glGetProgramiv(id, GL_INFO_LOG_LENGTH, &infolength);
-
-			char* infolog = (char*)calloc(infolength, sizeof(char));
-			glGetProgramInfoLog(id, infolength, NULL, infolog);
-
-			SDL_Log("Program link error [%s]: %s\n", name, infolog);
-			free(infolog);
-
-			id = 0;
-		}
-
-		glDetachShader(id, vsh);
-		glDetachShader(id, fsh);
-
-		glDeleteShader(vsh);
-		glDeleteShader(fsh);
-	}
-
-	return id;
-}
+float alpha = 1.0f;
+HMM_Vec3 position = { 100.0f, 200.0f, 0.0f };
 
 void createTriangle()
 {
 	float verts[] = {
-		0.0f, 0.0f, 1.0f,
-		100.0f, 0.0f, 1.0f,
-		50.0f, 50.0f, 1.0f
+		0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		300.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		150.0f, 150.0f, 1.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	Uint32 indices[] = {
@@ -109,14 +40,16 @@ void createTriangle()
 
 	glCreateBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(float), verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), verts, GL_STATIC_DRAW);
 
 	glCreateBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(Uint32), indices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 3 * sizeof(float));
 }
 
 void handleKeyboard(SDL_KeyboardEvent* ev)
@@ -125,9 +58,23 @@ void handleKeyboard(SDL_KeyboardEvent* ev)
 		dw.running = false;
 }
 
+void handleWindow(SDL_WindowEvent* ev)
+{
+	switch (ev->type)
+	{
+	case SDL_WINDOWEVENT_RESIZED:
+		glViewport(0, 0, ev->data1, ev->data2);
+		windowWidth = ev->data1;
+		windowHeight = ev->data2;
+		break;
+	default:
+		break;
+	}
+}
+
 int main(int argc, const char** argv)
 {
-	DmWindowParams dparams = { "SDL Window", 1024, 768, OPENGL };
+	DmWindowParams dparams = { "SDL Window", windowWidth, windowHeight, OPENGL };
 
 	if (initWindow(&dparams, &dw) > 0)
 		return 1;
@@ -147,8 +94,9 @@ int main(int argc, const char** argv)
 
 	createTriangle();
 
-	renderer->ortho = HMM_Orthographic_LH_NO(0.0f, 1024.0f, 0.0f, 768.0f, 0.1f, 1000.0f);
+	renderer->ortho = HMM_Orthographic_LH_NO(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.1f, 1000.0f);
 	HMM_Mat4 model = HMM_M4D(1.0f); //identity
+	model = HMM_Translate(position);
 
 	HMM_Vec3 color = HMM_V3(1.0f, 0.0f, 0.0f);
 
@@ -164,29 +112,61 @@ int main(int argc, const char** argv)
 				dw.running = false;
 				break;
 			case SDL_KEYDOWN:
-				handleKeyboard(&e);
+				handleKeyboard(&e.key);
+				break;
+			case SDL_WINDOWEVENT:
+				handleWindow(&e.window);
 				break;
 			default:
 				break;
 			}
 		}
 
+		int x, y;
+		int x1, y1;
+		SDL_GetRelativeMouseState(&x1, &y1);
+		Uint32 buttons = SDL_GetMouseState(&x, &y);
+		y = windowHeight - y; //invert from top-left to bottom-left
+		HMM_Mat4 modelInverse = HMM_InvTranslate(model);
+		HMM_Vec4 mp = HMM_MulM4V4(modelInverse, HMM_V4((float)x, (float)y, 0.0f, 1.0f)); //translate mouse coords to model coords
+		if (mp.X > 0 && mp.X < 300 && mp.Y > 0 && mp.Y < 150)
+		{
+			alpha = 0.6f;
+			if (buttons & SDL_BUTTON_LMASK)
+			{
+				//why x axis is reverse?
+				printf("%d,%d\n", x1, y1);
+				HMM_Vec3 pmdiff = HMM_SubV3(HMM_V3(x, y, 0.0f), position);
+				pmdiff = HMM_AddV3(pmdiff, HMM_V3(x1, y1, 0.0f));
+				position = HMM_SubV3(HMM_V3(x, y, 0.0f), pmdiff);
+				model = HMM_Translate(position);
+			}
+		}
+		else
+		{
+			alpha = 1.0f;
+		}
+
 		beginDraw();
+
+		beginDraw2D();
 
 		glUseProgram(shader);
 		GLint mloc = glGetUniformLocation(shader, "model");
 		GLint ploc = glGetUniformLocation(shader, "proj");
 		GLint aloc = glGetUniformLocation(shader, "alpha");
-		GLint cloc = glGetUniformLocation(shader, "color");
+		//GLint cloc = glGetUniformLocation(shader, "color");
 
 		glUniformMatrix4fv(mloc, 1, GL_FALSE, &model);
 		glUniformMatrix4fv(ploc, 1, GL_FALSE, &renderer->ortho);
-		glUniform1f(aloc, 1.0f);
-		glUniform3fv(cloc, 1, &color);
+		glUniform1f(aloc, alpha);
+		//glUniform3fv(cloc, 1, &color);
 
 		glBindVertexArray(vao);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+
+		endDraw2D();
 
 		endDraw(&dw);
 	}

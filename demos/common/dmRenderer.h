@@ -13,8 +13,12 @@ typedef struct DMRenderer
 
 DMRenderer* initRenderer(DmWindow* win);
 void destroyRenderer(DMRenderer* dmRenderer);
+
 void beginDraw();
 void endDraw(DmWindow* win);
+
+void beginDraw2D();
+void endDraw2D();
 
 #ifdef DM_RENDERER_IMPLEMENTATION
 
@@ -70,6 +74,18 @@ void beginDraw()
 void endDraw(DmWindow* win)
 {
 	SDL_GL_SwapWindow(win->window);
+}
+
+void beginDraw2D()
+{
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void endDraw2D()
+{
+	glDisable(GL_BLEND);
 }
 
 #endif // DM_RENDERER_IMPLEMENTATION
