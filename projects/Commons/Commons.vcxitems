@@ -23,7 +23,4 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\khrplatform.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\vector.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\demos\common\glad.c" />
-  </ItemGroup>
 </Project>

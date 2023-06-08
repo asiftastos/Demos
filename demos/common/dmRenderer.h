@@ -23,8 +23,12 @@ void endDraw2D();
 #ifdef DM_RENDERER_IMPLEMENTATION
 
 #include <stdlib.h>
-#include <glad.h>
 
+#define GLAD_MALLOC malloc
+#define GLAD_FREE free
+
+#define GLAD_GL_IMPLEMENTATION
+#include <glad.h>
 
 DMRenderer* initRenderer(DmWindow* win)
 {
@@ -38,7 +42,7 @@ DMRenderer* initRenderer(DmWindow* win)
 	dmRenderer->glContext = SDL_GL_CreateContext(win->window);
 	int r = SDL_GL_MakeCurrent(win->window, dmRenderer->glContext);
 
-	r = gladLoadGLLoader(SDL_GL_GetProcAddress);
+	r = gladLoadGL(SDL_GL_GetProcAddress);
 
 	SDL_GL_SetSwapInterval(1);
 

@@ -14,23 +14,16 @@ void handleKeyboard(SDL_KeyboardEvent *ev)
 		dw.running = false;
 }
 
-int main(int argc, const char** argv)
+int main(int argc, const char* argv[])
 {
-	DmWindowParams dparams = { "SDL Window", 1024, 768, NOAPI };
+	DmWindowParams dparams = { 1024, 768, NOAPI, "SDL Window" };
 
-	if (initWindow(&dparams, &dw) > 0)
+	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
 
-	/*	SYSTEM INFO */
-	int cpus = SDL_GetCPUCount();
-	int ram = SDL_GetSystemRAM();
-	SDL_Log("CPUs: %d\tRAM: %d MB", cpus, ram);
-	
-	/*	FILESYSTEM INFO  */
-	SDL_Log("Working Dir: %s\n", SDL_GetBasePath());
+	dw.running = true;
 
 	SDL_Event e = { 0 };
-	dw.running = true;
 	while (dw.running)
 	{
 		while (SDL_PollEvent(&e))
@@ -41,7 +34,7 @@ int main(int argc, const char** argv)
 				dw.running = false;
 				break;
 			case SDL_KEYDOWN:
-				handleKeyboard(&e);
+				handleKeyboard(&e.key);
 				break;
 			default:
 				break;
@@ -49,7 +42,7 @@ int main(int argc, const char** argv)
 		}
 	}
 
-	quitWindow(&dw);
+	CloseWindow(&dw);
 
 	return 0;
 }

@@ -17,9 +17,9 @@ void handleKeyboard(SDL_KeyboardEvent* ev)
 
 int main(int argc, const char** argv)
 {
-	DmWindowParams dparams = { "SDL Renderer", 1280, 900, NOAPI };
+	DmWindowParams dparams = { 1280, 900, NOAPI, "SDL Renderer" };
 
-	if (initWindow(&dparams, &dw) > 0)
+	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
 
 	int rdDrvCount = SDL_GetNumRenderDrivers();
@@ -39,7 +39,7 @@ int main(int argc, const char** argv)
 	if (!sdlrenderer)
 	{
 		SDL_Log("SDL Renderer error: %s\n", SDL_GetError());
-		quitWindow(&dw);
+		CloseWindow(&dw);
 		return 1;
 	}
 	
@@ -86,7 +86,7 @@ int main(int argc, const char** argv)
 	if (sdlrenderer)
 		SDL_DestroyRenderer(sdlrenderer);
 
-	quitWindow(&dw);
+	CloseWindow(&dw);
 
 	return 0;
 }

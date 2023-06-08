@@ -74,15 +74,15 @@ void handleWindow(SDL_WindowEvent* ev)
 
 int main(int argc, const char** argv)
 {
-	DmWindowParams dparams = { "SDL Window", windowWidth, windowHeight, OPENGL };
+	DmWindowParams dparams = { windowWidth, windowHeight, OPENGL, "SDL Window" };
 
-	if (initWindow(&dparams, &dw) > 0)
+	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
 
 	renderer = initRenderer(&dw);
 	if (!renderer)
 	{
-		quitWindow(&dw);
+		CloseWindow(&dw);
 		return 1;
 	}
 
@@ -176,7 +176,7 @@ int main(int argc, const char** argv)
 	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(shader);
 	destroyRenderer(renderer);
-	quitWindow(&dw);
+	CloseWindow(&dw);
 
 	return 0;
 }

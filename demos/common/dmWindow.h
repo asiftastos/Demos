@@ -13,23 +13,23 @@ typedef enum DmGraphicsApi {
 }DmGraphicsApi;
 
 typedef struct DmWindowParams {
-	char* title;
 	int width;
 	int height;
 	DmGraphicsApi api;
+	char* title;
 }DmWindowParams;
 
 typedef struct DmWindow {
-	SDL_Window* window;
 	bool running;
+	SDL_Window* window;
 }DmWindow;
 
-int initWindow(DmWindowParams* params, DmWindow* dmW);
-void quitWindow(DmWindow* dmW);
+int InitWindow(DmWindowParams* params, DmWindow* dmW);
+void CloseWindow(DmWindow* dmW);
 
 #ifdef DM_WINDOW_IMPLEMENTATION
 
-int initWindow(DmWindowParams* params, DmWindow* dmW)
+int InitWindow(DmWindowParams* params, DmWindow* dmW)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
@@ -58,6 +58,7 @@ int initWindow(DmWindowParams* params, DmWindow* dmW)
 	}
 	SDL_Log("SDL2 window created!\n");
 
+	/*	Video Drivers  */
 	int vidDrvCount = SDL_GetNumVideoDrivers();
 	SDL_Log("Video drivers: %d\n", vidDrvCount);
 	for (int i = 0; i < vidDrvCount; i++)
@@ -65,6 +66,7 @@ int initWindow(DmWindowParams* params, DmWindow* dmW)
 		SDL_Log("[%d]: %s\n", i, SDL_GetVideoDriver(i));
 	}
 
+	/*  Video Displays  */
 	int vidDisplaysCount = SDL_GetNumVideoDisplays();
 	SDL_Log("Video displays: %d\n", vidDisplaysCount);
 	for (int i = 0; i < vidDisplaysCount; i++)
@@ -72,14 +74,22 @@ int initWindow(DmWindowParams* params, DmWindow* dmW)
 		SDL_Log("[%d]: %s\n", i, SDL_GetDisplayName(i));
 	}
 
+	/*	SYSTEM INFO */
+	int cpus = SDL_GetCPUCount();
+	int ram = SDL_GetSystemRAM();
+	SDL_Log("CPUs: %d\tRAM: %d MB", cpus, ram);
+
+	/*	FILESYSTEM INFO  */
+	SDL_Log("Working Dir: %s\n", SDL_GetBasePath());
+
 	return 0;
 }
 
-void quitWindow(DmWindow* dmW)
+void CloseWindow(DmWindow* dmW)
 {
 	SDL_DestroyWindow(dmW->window);
 	SDL_Quit();
-	SDL_Log("SDL2 quit!!\n");
+	SDL_Log("SDL2 closed!!\n");
 }
 
 #endif // DM_WINDOW_IMPLEMENTATION

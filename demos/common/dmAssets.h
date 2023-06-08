@@ -10,7 +10,10 @@ unsigned int createProgram(GLuint vsh, GLuint fsh, const char* name);
 
 #include <stdlib.h>
 #include <stdio.h>
+
+#ifndef GLAD_GL_IMPLEMENTATION
 #include <glad.h>
+#endif // GLAD_GL_IMPLEMENTATION
 
 char* loadFileText(const char* filename, int *length)
 {
