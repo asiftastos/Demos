@@ -11,14 +11,14 @@ typedef struct DMRenderer
 	HMM_Mat4 projection;
 }DMRenderer;
 
-DMRenderer* initRenderer(DmWindow* win);
-void destroyRenderer(DMRenderer* dmRenderer);
+DMRenderer* InitRenderer(DmWindow* win);
+void DestroyRenderer(DMRenderer* dmRenderer);
 
-void beginDraw();
-void endDraw(DmWindow* win);
+void BeginDraw();
+void EndDraw(DmWindow* win);
 
-void beginDraw2D();
-void endDraw2D();
+void BeginDraw2D();
+void EndDraw2D();
 
 #ifdef DM_RENDERER_IMPLEMENTATION
 
@@ -30,7 +30,7 @@ void endDraw2D();
 #define GLAD_GL_IMPLEMENTATION
 #include <glad.h>
 
-DMRenderer* initRenderer(DmWindow* win)
+DMRenderer* InitRenderer(DmWindow* win)
 {
 	DMRenderer* dmRenderer = (DMRenderer*)calloc(1, sizeof(DMRenderer));
 	if (!dmRenderer)
@@ -60,7 +60,7 @@ DMRenderer* initRenderer(DmWindow* win)
 	return dmRenderer;
 }
 
-void destroyRenderer(DMRenderer* dmRenderer)
+void DestroyRenderer(DMRenderer* dmRenderer)
 {
 	SDL_GL_DeleteContext(dmRenderer->glContext);
 
@@ -70,24 +70,24 @@ void destroyRenderer(DMRenderer* dmRenderer)
 	SDL_Log("OpenGL renderer destroyed!\n");
 }
 
-void beginDraw()
+void BeginDraw()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void endDraw(DmWindow* win)
+void EndDraw(DmWindow* win)
 {
 	SDL_GL_SwapWindow(win->window);
 }
 
-void beginDraw2D()
+void BeginDraw2D()
 {
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void endDraw2D()
+void EndDraw2D()
 {
 	glDisable(GL_BLEND);
 }

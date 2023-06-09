@@ -79,7 +79,7 @@ int main(int argc, const char** argv)
 	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
 
-	renderer = initRenderer(&dw);
+	renderer = InitRenderer(&dw);
 	if (!renderer)
 	{
 		CloseWindow(&dw);
@@ -147,9 +147,9 @@ int main(int argc, const char** argv)
 			alpha = 1.0f;
 		}
 
-		beginDraw();
+		BeginDraw();
 
-		beginDraw2D();
+		BeginDraw2D();
 
 		glUseProgram(shader);
 		GLint mloc = glGetUniformLocation(shader, "model");
@@ -166,16 +166,16 @@ int main(int argc, const char** argv)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
 
-		endDraw2D();
+		EndDraw2D();
 
-		endDraw(&dw);
+		EndDraw(&dw);
 	}
 
 	glDeleteBuffers(1, &ibo);
 	glDeleteBuffers(1, &vbo);
 	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(shader);
-	destroyRenderer(renderer);
+	DestroyRenderer(renderer);
 	CloseWindow(&dw);
 
 	return 0;
