@@ -42,6 +42,11 @@ void ProcessEvents(DmWindow* dmW, SDL_Event* event);
 void GrabMouse(DmWindow* dmW);
 void ReleaseMouse(DmWindow* dmW);
 
+/*
+* ------------------------------------
+*	IMPLEMENTATION
+* ------------------------------------
+*/
 #ifdef DM_WINDOW_IMPLEMENTATION
 
 int InitWindow(DmWindowParams* params, DmWindow* dmW)

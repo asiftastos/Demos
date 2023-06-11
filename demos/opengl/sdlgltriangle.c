@@ -15,9 +15,10 @@ int windowHeight = 768;
 
 DmWindow dw;
 DMRenderer* renderer;
-GLuint vao;
-GLuint vbo;
-GLuint ibo;
+DMVao vao;
+DMVertexBuffer vbo;
+DMVertexBuffer ibo;
+
 GLuint shader;
 
 float alpha = 1.0f;
@@ -26,30 +27,27 @@ HMM_Vec3 position = { 100.0f, 200.0f, 0.0f };
 void createTriangle()
 {
 	float verts[] = {
-		0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
-		300.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-		150.0f, 150.0f, 1.0f, 0.0f, 0.0f, 1.0f
+		0.0f, 150.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+		300.0f, 150.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+		150.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
 	};
 
 	Uint32 indices[] = {
 		0,1,2
 	};
 
-	glCreateVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	CreateVao(&vao, 6 * sizeof(float));
 
-	glCreateBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, 18 * sizeof(float), verts, GL_STATIC_DRAW);
+	CreateBuffer(&vbo, 18 * sizeof(float), GL_ARRAY_BUFFER);
+	UploadBufferData(&vbo, verts, GL_STATIC_DRAW);
 
-	glCreateBuffers(1, &ibo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * sizeof(Uint32), indices, GL_STATIC_DRAW);
+	CreateBuffer(&ibo, 3 * sizeof(Uint32), GL_ELEMENT_ARRAY_BUFFER);
+	UploadBufferData(&ibo, indices, GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 3 * sizeof(float));
+	EnableVaoAttribute(&vao, (DMAttribute) { 0, 3, 0 }); 
+	EnableVaoAttribute(&vao, (DMAttribute) { 1, 3, 3 * sizeof(float) });
+
+	vao.primitiveCount = 3;
 }
 
 void handleKeyboard(SDL_KeyboardEvent* ev)
@@ -97,7 +95,7 @@ int main(int argc, const char** argv)
 
 	createTriangle();
 
-	renderer->ortho = HMM_Orthographic_LH_NO(0.0f, (float)windowWidth, (float)windowHeight, 0.0f, 0.1f, 1000.0f);
+	renderer->ortho = HMM_Orthographic_LH_NO(0.0f, (float)windowWidth, (float)windowHeight, 0.0f, 0.1f, 1.0f);
 	HMM_Mat4 model = HMM_M4D(1.0f); //identity
 	model = HMM_Translate(position);
 
@@ -113,7 +111,6 @@ int main(int argc, const char** argv)
 		int x1, y1;
 		SDL_GetRelativeMouseState(&x1, &y1);
 		Uint32 buttons = SDL_GetMouseState(&x, &y);
-		//y = windowHeight - y; //invert from top-left to bottom-left
 		HMM_Mat4 modelInverse = HMM_InvTranslate(model);
 		HMM_Vec4 mp = HMM_MulM4V4(modelInverse, HMM_V4((float)x, (float)y, 0.0f, 1.0f)); //translate mouse coords to model coords
 		if (mp.X > 0 && mp.X < 300 && mp.Y > 0 && mp.Y < 150)
@@ -141,26 +138,26 @@ int main(int argc, const char** argv)
 		GLint mloc = glGetUniformLocation(shader, "model");
 		GLint ploc = glGetUniformLocation(shader, "proj");
 		GLint aloc = glGetUniformLocation(shader, "alpha");
-		//GLint cloc = glGetUniformLocation(shader, "color");
 
 		glUniformMatrix4fv(mloc, 1, GL_FALSE, &model);
 		glUniformMatrix4fv(ploc, 1, GL_FALSE, &renderer->ortho);
 		glUniform1f(aloc, alpha);
 		//glUniform3fv(cloc, 1, &color);
 
-		glBindVertexArray(vao);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+		EnableBuffer(&ibo, 0);
+		vao.primitiveType = GL_TRIANGLES;
+		DrawElementsVao(&vao, GL_UNSIGNED_INT);
 
 		EndDraw2D();
 
 		EndDraw(&dw);
 	}
 
-	glDeleteBuffers(1, &ibo);
-	glDeleteBuffers(1, &vbo);
-	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(shader);
+	
+	DeleteBuffer(&ibo);
+	DeleteBuffer(&vbo);
+	DeleteVao(&vao);
 	DestroyRenderer(renderer);
 	CloseWindow(&dw);
 
