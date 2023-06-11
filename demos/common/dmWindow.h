@@ -19,13 +19,28 @@ typedef struct DmWindowParams {
 	char* title;
 }DmWindowParams;
 
+typedef void (*QUITHANDLER)(void);
+typedef void(*WINDOWHANDLER)(SDL_WindowEvent* event);
+typedef void(*KEYBOARDHANDLER)(SDL_KeyboardEvent* event);
+typedef void(*MOUSEBUTTONHANDLER)(SDL_MouseButtonEvent* event);
+
 typedef struct DmWindow {
 	bool running;
 	SDL_Window* window;
+	bool isMouseGrabbed;
+	QUITHANDLER quitHandler;
+	WINDOWHANDLER windowHandler;
+	KEYBOARDHANDLER keyboardHandler;
+	MOUSEBUTTONHANDLER mouseButtonHandler;
 }DmWindow;
 
 int InitWindow(DmWindowParams* params, DmWindow* dmW);
 void CloseWindow(DmWindow* dmW);
+
+void ProcessEvents(DmWindow* dmW, SDL_Event* event);
+
+void GrabMouse(DmWindow* dmW);
+void ReleaseMouse(DmWindow* dmW);
 
 #ifdef DM_WINDOW_IMPLEMENTATION
 
@@ -82,6 +97,14 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 	/*	FILESYSTEM INFO  */
 	SDL_Log("Working Dir: %s\n", SDL_GetBasePath());
 
+	/*  EVENT HANDLERS */
+	dmW->quitHandler = NULL;
+	dmW->keyboardHandler = NULL;
+	dmW->windowHandler = NULL;
+	dmW->mouseButtonHandler = NULL;
+
+	dmW->isMouseGrabbed = false;
+
 	return 0;
 }
 
@@ -90,6 +113,52 @@ void CloseWindow(DmWindow* dmW)
 	SDL_DestroyWindow(dmW->window);
 	SDL_Quit();
 	SDL_Log("SDL2 closed!!\n");
+}
+
+void ProcessEvents(DmWindow* dmW, SDL_Event* event)
+{
+	while (SDL_PollEvent(event))
+	{
+		switch (event->type)
+		{
+		case SDL_QUIT:
+			dmW->running = false;
+			if (dmW->quitHandler)  dmW->quitHandler();
+			break;
+		case SDL_KEYDOWN:
+		case SDL_KEYUP:
+			if (dmW->keyboardHandler)  dmW->keyboardHandler(&event->key);
+			break;
+		case SDL_WINDOWEVENT:
+			if (dmW->windowHandler)  dmW->windowHandler(&event->window);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+		case SDL_MOUSEBUTTONUP:
+			if (dmW->mouseButtonHandler)  dmW->mouseButtonHandler(&event->button);
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void GrabMouse(DmWindow* dmW)
+{
+	int w, h;
+	SDL_GetWindowSize(dmW->window, &w, &h);
+	SDL_Rect r = (SDL_Rect){ (int)(w / 2), (int)(h / 2), 1, 1 };
+	SDL_SetWindowMouseRect(dmW->window, &r);
+	SDL_SetWindowMouseGrab(dmW->window, SDL_TRUE);
+	SDL_ShowCursor(SDL_DISABLE);
+	dmW->isMouseGrabbed = true;
+}
+
+void ReleaseMouse(DmWindow* dmW)
+{
+	SDL_SetWindowMouseRect(dmW->window, NULL);
+	SDL_SetWindowMouseGrab(dmW->window, SDL_FALSE);
+	SDL_ShowCursor(SDL_ENABLE);
+	dmW->isMouseGrabbed = false;
 }
 
 #endif // DM_WINDOW_IMPLEMENTATION

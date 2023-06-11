@@ -20,6 +20,19 @@ void EndDraw(DmWindow* win);
 void BeginDraw2D();
 void EndDraw2D();
 
+void BeginDraw3D();
+
+//depth test
+void DepthTest(bool enable);
+
+//blend
+void Blend(bool enable);
+
+/* 
+* ------------------------------
+*	IMPLEMENTATION
+* ------------------------------
+*/
 #ifdef DM_RENDERER_IMPLEMENTATION
 
 #include <stdlib.h>
@@ -82,14 +95,43 @@ void EndDraw(DmWindow* win)
 
 void BeginDraw2D()
 {
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	DepthTest(false);
+	Blend(true);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void EndDraw2D()
 {
-	glDisable(GL_BLEND);
+	Blend(false);
+}
+
+void BeginDraw3D()
+{
+	DepthTest(true);
+}
+
+void DepthTest(bool enable)
+{
+	if (enable)
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	else
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
+}
+
+void Blend(bool enable)
+{
+	if (enable)
+	{
+		glEnable(GL_BLEND);
+	}
+	else
+	{
+		glDisable(GL_BLEND);
+	}
 }
 
 #endif // DM_RENDERER_IMPLEMENTATION

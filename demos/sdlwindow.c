@@ -7,11 +7,16 @@
 #include <dmWindow.h>
 
 DmWindow dw;
+bool grabmouse = false;
 
 void handleKeyboard(SDL_KeyboardEvent *ev)
 {
 	if (ev->keysym.sym == SDLK_ESCAPE)
 		dw.running = false;
+	if (ev->keysym.sym == SDLK_F1)
+		GrabMouse(&dw);
+	if (ev->keysym.sym == SDLK_F2)
+		ReleaseMouse(&dw);
 }
 
 int main(int argc, const char* argv[])
@@ -21,25 +26,14 @@ int main(int argc, const char* argv[])
 	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
 
+	dw.keyboardHandler = handleKeyboard;
+
 	dw.running = true;
 
 	SDL_Event e = { 0 };
 	while (dw.running)
 	{
-		while (SDL_PollEvent(&e))
-		{
-			switch (e.type)
-			{
-			case SDL_QUIT:
-				dw.running = false;
-				break;
-			case SDL_KEYDOWN:
-				handleKeyboard(&e.key);
-				break;
-			default:
-				break;
-			}
-		}
+		ProcessEvents(&dw, &e);
 	}
 
 	CloseWindow(&dw);

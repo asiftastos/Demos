@@ -79,6 +79,9 @@ int main(int argc, const char** argv)
 	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
 
+	dw.keyboardHandler = handleKeyboard;
+	dw.windowHandler = handleWindow;
+
 	renderer = InitRenderer(&dw);
 	if (!renderer)
 	{
@@ -94,7 +97,7 @@ int main(int argc, const char** argv)
 
 	createTriangle();
 
-	renderer->ortho = HMM_Orthographic_LH_NO(0.0f, (float)windowWidth, 0.0f, (float)windowHeight, 0.1f, 1000.0f);
+	renderer->ortho = HMM_Orthographic_LH_NO(0.0f, (float)windowWidth, (float)windowHeight, 0.0f, 0.1f, 1000.0f);
 	HMM_Mat4 model = HMM_M4D(1.0f); //identity
 	model = HMM_Translate(position);
 
@@ -104,29 +107,13 @@ int main(int argc, const char** argv)
 	dw.running = true;
 	while (dw.running)
 	{
-		while (SDL_PollEvent(&e))
-		{
-			switch (e.type)
-			{
-			case SDL_QUIT:
-				dw.running = false;
-				break;
-			case SDL_KEYDOWN:
-				handleKeyboard(&e.key);
-				break;
-			case SDL_WINDOWEVENT:
-				handleWindow(&e.window);
-				break;
-			default:
-				break;
-			}
-		}
+		ProcessEvents(&dw, &e);
 
 		int x, y;
 		int x1, y1;
 		SDL_GetRelativeMouseState(&x1, &y1);
 		Uint32 buttons = SDL_GetMouseState(&x, &y);
-		y = windowHeight - y; //invert from top-left to bottom-left
+		//y = windowHeight - y; //invert from top-left to bottom-left
 		HMM_Mat4 modelInverse = HMM_InvTranslate(model);
 		HMM_Vec4 mp = HMM_MulM4V4(modelInverse, HMM_V4((float)x, (float)y, 0.0f, 1.0f)); //translate mouse coords to model coords
 		if (mp.X > 0 && mp.X < 300 && mp.Y > 0 && mp.Y < 150)
@@ -134,11 +121,10 @@ int main(int argc, const char** argv)
 			alpha = 0.6f;
 			if (buttons & SDL_BUTTON_LMASK)
 			{
-				//why x axis is reverse?
-				printf("%d,%d\n", x1, y1);
-				HMM_Vec3 pmdiff = HMM_SubV3(HMM_V3(x, y, 0.0f), position);
+				//printf("[%d,%d]: %d,%d\n", x, y, x1, y1);
+				HMM_Vec3 pmdiff = HMM_SubV3(position, HMM_V3(x, y, 0.0f));
 				pmdiff = HMM_AddV3(pmdiff, HMM_V3(x1, y1, 0.0f));
-				position = HMM_SubV3(HMM_V3(x, y, 0.0f), pmdiff);
+				position = HMM_AddV3(HMM_V3(x, y, 0.0f), pmdiff);
 				model = HMM_Translate(position);
 			}
 		}

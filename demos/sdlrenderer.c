@@ -22,6 +22,8 @@ int main(int argc, const char** argv)
 	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
 
+	dw.keyboardHandler = handleKeyboard;
+
 	int rdDrvCount = SDL_GetNumRenderDrivers();
 	int driverIndex = -1;
 	for (int i = 0; i < rdDrvCount; i++)
@@ -51,20 +53,7 @@ int main(int argc, const char** argv)
 	dw.running = true;
 	while (dw.running)
 	{
-		while (SDL_PollEvent(&e))
-		{
-			switch (e.type)
-			{
-			case SDL_QUIT:
-				dw.running = false;
-				break;
-			case SDL_KEYDOWN:
-				handleKeyboard(&e);
-				break;
-			default:
-				break;
-			}
-		}
+		ProcessEvents(&dw, &e);
 
 		SDL_SetRenderDrawColor(sdlrenderer, 50, 50, 50, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(sdlrenderer);
