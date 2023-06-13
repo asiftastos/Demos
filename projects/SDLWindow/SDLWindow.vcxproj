@@ -74,6 +74,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)libs\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <EnableUAC>false</EnableUAC>
+      <ManifestFile />
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -101,6 +103,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)libs\SDL2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile />
+      <EnableUAC>false</EnableUAC>
+      <ManifestFile />
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
