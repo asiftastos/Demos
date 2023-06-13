@@ -35,7 +35,7 @@ typedef struct DmWindow {
 }DmWindow;
 
 int InitWindow(DmWindowParams* params, DmWindow* dmW);
-void CloseWindow(DmWindow* dmW);
+void QuitWindow(DmWindow* dmW);
 
 void ProcessEvents(DmWindow* dmW, SDL_Event* event);
 
@@ -113,7 +113,7 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 	return 0;
 }
 
-void CloseWindow(DmWindow* dmW)
+void QuitWindow(DmWindow* dmW)
 {
 	SDL_DestroyWindow(dmW->window);
 	SDL_Quit();

@@ -159,7 +159,7 @@ int main(int argc, const char** argv)
 	DeleteBuffer(&vbo);
 	DeleteVao(&vao);
 	DestroyRenderer(renderer);
-	CloseWindow(&dw);
+	QuitWindow(&dw);
 
 	return 0;
 }

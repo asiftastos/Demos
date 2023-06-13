@@ -1,5 +1,5 @@
 /*
-*	SDL Window Demo
+*	SDL Window
 */
 
 #include <stdio.h>
@@ -40,7 +40,8 @@ int main(int argc, const char* argv[])
 		ProcessEvents(&dw, &e);
 	}
 
-	CloseWindow(&dw);
+	//sdl
+	QuitWindow(&dw);
 
 	return 0;
 }

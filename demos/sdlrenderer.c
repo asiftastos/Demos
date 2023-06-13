@@ -75,7 +75,7 @@ int main(int argc, const char** argv)
 	if (sdlrenderer)
 		SDL_DestroyRenderer(sdlrenderer);
 
-	CloseWindow(&dw);
+	QuitWindow(&dw);
 
 	return 0;
 }
