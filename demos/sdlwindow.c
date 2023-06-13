@@ -7,7 +7,6 @@
 #include <dmWindow.h>
 
 DmWindow dw;
-bool grabmouse = false;
 
 void handleKeyboard(SDL_KeyboardEvent *ev)
 {
@@ -21,7 +20,12 @@ void handleKeyboard(SDL_KeyboardEvent *ev)
 
 int main(int argc, const char* argv[])
 {
-	DmWindowParams dparams = { 1024, 768, NOAPI, "SDL Window" };
+	DmWindowParams dparams = { 
+		.width = 1024, 
+		.height = 768, 
+		.api = NOAPI, 
+		.title = "SDL Window" 
+	};
 
 	if (InitWindow(&dparams, &dw) > 0)
 		return 1;
