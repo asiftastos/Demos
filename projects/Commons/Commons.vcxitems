@@ -21,6 +21,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\glad.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\HandmadeMath.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\khrplatform.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\vector.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\raygui.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\raygui_backend.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\raymath.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\demos\common\rlgl.h" />
   </ItemGroup>
 </Project>
