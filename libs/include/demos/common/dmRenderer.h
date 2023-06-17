@@ -1,8 +1,8 @@
 #pragma once
 
 #include <stdbool.h>
-#include <dmWindow.h>
-#include <HandmadeMath.h>
+#include "demos/common/dmWindow.h"
+#include "demos/common/HandmadeMath.h"
 
 typedef struct DMAttribute
 {
@@ -92,7 +92,7 @@ void UploadBufferData(DMVertexBuffer* buffer, void* data, unsigned int drawType)
 #define GLAD_FREE free
 
 #define GLAD_GL_IMPLEMENTATION
-#include <glad.h>
+#include "demos/common/glad.h"
 
 DMRenderer* InitRenderer(DmWindow* win)
 {
