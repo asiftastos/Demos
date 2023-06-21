@@ -200,7 +200,7 @@ int main(int argc, const char* argv[])
 			.resolveTarget = NULL,
 			.loadOp = WGPULoadOp_Clear,
 			.storeOp = WGPUStoreOp_Store,
-			.clearValue = (WGPUColor){0.3f, 0.3f, 0.3f, 1.0f},
+			.clearValue = (WGPUColor){0.2, 0.2, 0.2, 1.0},
 		};
 
 		WGPURenderPassDescriptor renderPassDesc = { 
