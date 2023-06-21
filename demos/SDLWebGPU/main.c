@@ -5,9 +5,9 @@
 */
 
 #include <stdio.h>
-#include "SDL2/SDL_syswm.h"
 #define DM_WINDOW_IMPLEMENTATION
 #include "demos/common/dmWindow.h"
+#include "SDL2/SDL_syswm.h"
 
 DmWindow dw;
 
@@ -89,13 +89,16 @@ void InitWGPU()
 
 	//surface
 	SDL_SysWMinfo swmInfo;
+	SDL_VERSION(&swmInfo.version);
 	SDL_GetWindowWMInfo(dw.window, &swmInfo);
+	HINSTANCE hinst = swmInfo.info.win.hinstance;
+	HWND hwnd = swmInfo.info.win.window;
 	WGPUSurfaceDescriptor surfDesc = {
 		.label = NULL,
 		.nextInChain = (const WGPUChainedStruct*)&(WGPUSurfaceDescriptorFromWindowsHWND) {
 			.chain = (WGPUChainedStruct){.next = NULL, .sType = WGPUSType_SurfaceDescriptorFromWindowsHWND, },
-			.hinstance = swmInfo.info.win.hinstance,
-			.hwnd = swmInfo.info.win.window,
+			.hinstance = hinst,
+			.hwnd = hwnd,
 		},
 	};
 	dwgpu.surface = wgpuInstanceCreateSurface(dwgpu.instance, &surfDesc);
