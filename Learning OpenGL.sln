@@ -17,6 +17,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RLGLStandalone", "demos\RLG
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDLWebGPU", "demos\SDLWebGPU\SDLWebGPU.vcxproj", "{8F994269-5E23-4DB0-8E97-C72A642DD8A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6A191E3B-D87A-4539-AD4B-FC363BB1EC7A}"
+	ProjectSection(SolutionItems) = preProject
+		versions.txt = versions.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
