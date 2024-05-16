@@ -14,4 +14,7 @@
   <ItemGroup>
     <None Include="..\..\libs\wgpu_native.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libs\include\demos\common\dmWindow.h" />
+  </ItemGroup>
 </Project>

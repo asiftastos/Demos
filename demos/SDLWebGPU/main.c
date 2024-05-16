@@ -1,7 +1,7 @@
 /*
 *	SDL WebGPU native
 * 
-* TODO: Update WGPU natives and change the surface configuration initialization
+* 
 */
 
 #include <stdio.h>
@@ -13,13 +13,17 @@ DmWindow dw;
 
 #include "WGPU/wgpu.h"
 
+const static int windowWidth = 800;
+const static int windowHeight = 600;
+
 typedef struct DmWGPU {
 	WGPUInstance instance;
 	WGPUSurface surface;
 	WGPUAdapter adapter;
 	WGPUDevice device;
 	WGPUQueue queue;
-	WGPUSwapChain swapchain;
+	WGPUSurfaceCapabilities surfCaps;
+	WGPUSurfaceConfiguration surfConfig;
 }DmWGPU;
 
 DmWGPU dwgpu;
@@ -124,7 +128,7 @@ void InitWGPU()
 	WGPUDeviceDescriptor devDesc = {
 		.nextInChain = NULL,
 		.label = "My device",
-		.requiredFeaturesCount = 0,
+		.requiredFeatureCount = 0,
 		.requiredLimits = NULL,
 		.defaultQueue.nextInChain = NULL,
 		.defaultQueue.label = "Default Queue",
@@ -138,20 +142,18 @@ void InitWGPU()
 	//get the main queue
 	dwgpu.queue = wgpuDeviceGetQueue(dwgpu.device);
 
-	//swapchain
-	WGPUTextureFormat swapchainFormat = wgpuSurfaceGetPreferredFormat(dwgpu.surface, dwgpu.adapter);
+	//surface configuration, replaces swapchain
+	WGPUTextureFormat surfFormat = wgpuSurfaceGetPreferredFormat(dwgpu.surface, dwgpu.adapter);
+	wgpuSurfaceGetCapabilities(dwgpu.surface, dwgpu.adapter, &dwgpu.surfCaps);
 
-	WGPUSwapChainDescriptor swapDesc = {
-		.nextInChain = NULL,
-		.width = 1024,
-		.height = 768,
-		.format = swapchainFormat,
-		.usage = WGPUTextureUsage_RenderAttachment,
-		.presentMode = WGPUPresentMode_Fifo,
-	};
-	dwgpu.swapchain = wgpuDeviceCreateSwapChain(dwgpu.device, dwgpu.surface, &swapDesc);
+	dwgpu.surfConfig.device = dwgpu.device;
+	dwgpu.surfConfig.format = surfFormat;
+	dwgpu.surfConfig.width = windowWidth;
+	dwgpu.surfConfig.height = windowHeight;
+	dwgpu.surfConfig.usage = WGPUTextureUsage_RenderAttachment;
+	dwgpu.surfConfig.presentMode = WGPUPresentMode_Fifo;
 
-	printf("Got WGPU swapchain at %p\n", dwgpu.swapchain);
+	wgpuSurfaceConfigure(dwgpu.surface, &dwgpu.surfConfig);
 }
 
 void handleKeyboard(SDL_KeyboardEvent* ev)
@@ -167,8 +169,8 @@ void handleKeyboard(SDL_KeyboardEvent* ev)
 int main(int argc, const char* argv[])
 {
 	DmWindowParams dparams = {
-		.width = 1024,
-		.height = 768,
+		.width = windowWidth,
+		.height = windowHeight,
 		.api = NOAPI,
 		.title = "WebGPU native"
 	};
@@ -187,7 +189,10 @@ int main(int argc, const char* argv[])
 	{
 		ProcessEvents(&dw, &e);
 
-		WGPUTextureView nextTexture = wgpuSwapChainGetCurrentTextureView(dwgpu.swapchain);
+		WGPUSurfaceTexture surfTexture;
+		wgpuSurfaceGetCurrentTexture(dwgpu.surface, &surfTexture);
+
+		WGPUTextureView nextTexture = wgpuTextureCreateView(surfTexture.texture, NULL);
 
 		WGPUCommandEncoderDescriptor cmdEncoderDesc = {
 			.nextInChain = NULL,
@@ -207,7 +212,6 @@ int main(int argc, const char* argv[])
 			.colorAttachmentCount = 1,
 			.colorAttachments = &renderPassColorAttach,
 			.depthStencilAttachment = NULL,
-			.timestampWriteCount = 0,
 			.timestampWrites = NULL,
 			.nextInChain = NULL,
 		};
@@ -215,7 +219,7 @@ int main(int argc, const char* argv[])
 		WGPURenderPassEncoder renderPass = wgpuCommandEncoderBeginRenderPass(cmdEncoder, &renderPassDesc);
 		wgpuRenderPassEncoderEnd(renderPass);
 
-		wgpuTextureViewDrop(nextTexture);
+		wgpuTextureViewRelease(nextTexture);
 
 		WGPUCommandBufferDescriptor cmdBufferDesc = {
 			.nextInChain = NULL,
@@ -223,17 +227,19 @@ int main(int argc, const char* argv[])
 		};
 
 		WGPUCommandBuffer cmdBuffer = wgpuCommandEncoderFinish(cmdEncoder, &cmdBufferDesc);
+		wgpuCommandEncoderRelease(cmdEncoder);
 		wgpuQueueSubmit(dwgpu.queue, 1, &cmdBuffer);
+		wgpuCommandBufferRelease(cmdBuffer);
 
-		wgpuSwapChainPresent(dwgpu.swapchain);
+		wgpuSurfacePresent(dwgpu.surface);
 	}
 
-	//wgpu
-	wgpuSwapChainDrop(dwgpu.swapchain);
-	wgpuDeviceDrop(dwgpu.device);
-	wgpuSurfaceDrop(dwgpu.surface);
-	wgpuAdapterDrop(dwgpu.adapter);
-	wgpuInstanceDrop(dwgpu.instance);
+	//wgpu release
+	wgpuQueueRelease(dwgpu.queue);
+	wgpuDeviceRelease(dwgpu.device);
+	wgpuSurfaceRelease(dwgpu.surface);
+	wgpuAdapterRelease(dwgpu.adapter);
+	wgpuInstanceRelease(dwgpu.instance);
 
 	//sdl
 	QuitWindow(&dw);
