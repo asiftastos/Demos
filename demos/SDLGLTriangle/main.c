@@ -6,12 +6,12 @@
 #define DM_WINDOW_IMPLEMENTATION
 #include "demos/common/dmWindow.h"
 #define DM_RENDERER_IMPLEMENTATION
-#include "demos/common/dmRenderer.h"
+#include "demos/opengl/dmRenderer.h"
 #define DM_ASSETS_IMPLEMENTATION
 #include "demos/common/dmAssets.h"
 
-int windowWidth = 1024;
-int windowHeight = 768;
+int windowWidth = 800;
+int windowHeight = 600;
 
 DmWindow dw;
 DMRenderer* renderer;

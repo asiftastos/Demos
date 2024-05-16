@@ -15,7 +15,7 @@ const static int windowWidth = 800;
 const static int windowHeight = 600;
 
 #define DM_WGPU_IMPLEMENTATION
-#include "demos/common/dmgpu.h"
+#include "demos/wgpu/dmgpu.h"
 DmWGPU dwgpu;
 
 

@@ -92,7 +92,7 @@ void UploadBufferData(DMVertexBuffer* buffer, void* data, unsigned int drawType)
 #define GLAD_FREE free
 
 #define GLAD_GL_IMPLEMENTATION
-#include "demos/common/glad.h"
+#include "demos/opengl/glad.h"
 
 DMRenderer* InitRenderer(DmWindow* win)
 {

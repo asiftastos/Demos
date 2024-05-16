@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 
-#include "demos/common/raymath.h"
+#include "raylib/raymath.h"
 /*
 #define LOG_WARNING 4
 #define TRACELOG
@@ -23,7 +23,7 @@
 #define RLGL_SHOW_GL_DETAILS_INFO  //need to define TRACELOG(...)
 */
 #define RLGL_IMPLEMENTATION
-#include "demos/common/rlgl.h"
+#include "raylib/rlgl.h"
 
 #define DM_WINDOW_IMPLEMENTATION
 #include "demos/common/dmWindow.h"

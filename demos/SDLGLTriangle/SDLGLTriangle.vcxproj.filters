@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\include\demos\common\dmAssets.h" />
-    <ClInclude Include="..\..\libs\include\demos\common\dmRenderer.h" />
     <ClInclude Include="..\..\libs\include\demos\common\dmWindow.h" />
+    <ClInclude Include="..\..\libs\include\demos\opengl\dmRenderer.h" />
   </ItemGroup>
 </Project>

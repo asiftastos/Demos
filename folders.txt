@@ -1,0 +1,21 @@
+./root
+	- Visual studio Solution file
+	- Docs
+	
+	/bin
+		- Executables, dll libraries and assets
+
+	/demos
+		- Demo source code files and Visual studio project files for each demo
+
+	/libs
+		- libraries for linkage
+
+		/include
+			- headers for libraries
+
+			/demos
+				- headers for demos common functionality like maths, opengl loaders, window management, input management, system management
+
+	/templates
+		- template visual studio projects for common setup projects
