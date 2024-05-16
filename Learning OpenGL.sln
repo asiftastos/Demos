@@ -20,6 +20,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{6A191E3B-D87A-4539-AD4B-FC363BB1EC7A}"
 	ProjectSection(SolutionItems) = preProject
 		folders.txt = folders.txt
+		TODO.txt = TODO.txt
 		versions.txt = versions.txt
 	EndProjectSection
 EndProject

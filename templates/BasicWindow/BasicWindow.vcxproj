@@ -173,6 +173,7 @@
     <ClCompile Include="main.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\libs\include\demos\common\dmIni.h" />
     <ClInclude Include="..\..\libs\include\demos\common\dmWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

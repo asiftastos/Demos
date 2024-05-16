@@ -3,3 +3,5 @@ Library versions
 SDL: 2.30.3  (updated 9/5/2024)
 
 WGPU native: 0.19.4.1  (updated 16/5/2024)
+
+HandmadeMath: 2.0.0  (updated 16/5/2024)

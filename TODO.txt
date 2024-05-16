@@ -1,0 +1,2 @@
+-	Add basic logger
+-	Add container types (lists, hashmaps)

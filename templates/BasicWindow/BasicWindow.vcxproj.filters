@@ -13,5 +13,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\include\demos\common\dmWindow.h" />
+    <ClInclude Include="..\..\libs\include\demos\common\dmIni.h" />
   </ItemGroup>
 </Project>
