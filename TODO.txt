@@ -1,2 +1,9 @@
 -	Add basic logger
 -	Add container types (lists, hashmaps)
+	- Added map and vec containers, make them header only (map.h/.c and vec.h/.c in common directory)
+-   Add ini config file reader 
+	- Consider if we can use the above containers
+	- Add ability to save the config
+-	Add utils header only
+	- Add the bitfields operation in ./demos/bitfields.c
+
