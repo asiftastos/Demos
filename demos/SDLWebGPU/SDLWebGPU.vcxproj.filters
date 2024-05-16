@@ -16,5 +16,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\include\demos\common\dmWindow.h" />
+    <ClInclude Include="..\..\libs\include\demos\common\dmgpu.h" />
   </ItemGroup>
 </Project>
