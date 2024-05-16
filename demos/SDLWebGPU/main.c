@@ -1,7 +1,7 @@
 /*
 *	SDL WebGPU native
 * 
-* TODO: fix swapchain not created because of invalid surface format
+* TODO: Update WGPU natives and change the surface configuration initialization
 */
 
 #include <stdio.h>
