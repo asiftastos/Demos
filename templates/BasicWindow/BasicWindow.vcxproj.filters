@@ -14,5 +14,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\include\demos\common\dmWindow.h" />
     <ClInclude Include="..\..\libs\include\demos\common\dmIni.h" />
+    <ClInclude Include="..\..\libs\include\demos\common\dmVec.h" />
+    <ClInclude Include="..\..\libs\include\demos\common\dmMap.h" />
   </ItemGroup>
 </Project>

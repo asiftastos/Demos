@@ -2,7 +2,17 @@
 *	SDL Window
 */
 
+// Standard library
 #include <stdio.h>
+
+//Demo Commons
+#define DM_VEC_IMPLEMENTATION
+#include "demos/common/dmVec.h"
+#define DM_MAP_IMPLEMENTATION
+#include "demos/common/dmMap.h"
+#define DM_INI_IMPLEMENTATION
+#include "demos/common/dmIni.h"
+
 #define DM_WINDOW_IMPLEMENTATION
 #include "demos/common/dmWindow.h"
 
