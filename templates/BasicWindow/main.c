@@ -10,6 +10,8 @@
 #include "demos/common/dmVec.h"
 #define DM_MAP_IMPLEMENTATION
 #include "demos/common/dmMap.h"
+#define DM_LOGGER_IMPLEMENTATION
+#include "demos/common/dmLogger.h"
 #define DM_INI_IMPLEMENTATION
 #include "demos/common/dmIni.h"
 

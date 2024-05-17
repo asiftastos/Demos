@@ -1,4 +1,5 @@
 -	Add basic logger
+	- Using SDL logging
 -	[DONE] Add container types (lists, hashmaps)
 	- [DONE] Added map and vec containers, make them header only (map.h/.c and vec.h/.c in common directory)
 -   [DONE] Add ini config file reader 

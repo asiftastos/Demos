@@ -169,14 +169,14 @@ ini_t* ini_load(const char* filename) {
     /* Init ini struct */
     ini = malloc(sizeof(*ini));
     if (!ini) {
-        goto fail;
+        return NULL;
     }
     memset(ini, 0, sizeof(*ini));
 
     /* Open file */
     fp = fopen(filename, "rb");
     if (!fp) {
-        goto fail;
+        return NULL;
     }
 
     /* Get file size */
@@ -190,7 +190,9 @@ ini_t* ini_load(const char* filename) {
     ini->end = ini->data + sz;
     n = fread(ini->data, 1, sz, fp);
     if (n != sz) {
-        goto fail;
+        if (fp) fclose(fp);
+        if (ini) ini_free(ini);
+        return NULL;
     }
 
     /* Prepare data */
@@ -199,11 +201,6 @@ ini_t* ini_load(const char* filename) {
     /* Clean up and return */
     fclose(fp);
     return ini;
-
-fail:
-    if (fp) fclose(fp);
-    if (ini) ini_free(ini);
-    return NULL;
 }
 
 void ini_free(ini_t* ini) {
