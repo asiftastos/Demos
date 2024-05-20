@@ -174,7 +174,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\include\demos\common\dmIni.h" />
-    <ClInclude Include="..\..\libs\include\demos\common\dmLogger.h" />
     <ClInclude Include="..\..\libs\include\demos\common\dmMap.h" />
     <ClInclude Include="..\..\libs\include\demos\common\dmVec.h" />
     <ClInclude Include="..\..\libs\include\demos\common\dmWindow.h" />

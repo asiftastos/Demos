@@ -26,6 +26,7 @@ typedef void(*MOUSEBUTTONHANDLER)(SDL_MouseButtonEvent* event);
 
 typedef struct DmWindow {
 	bool running;
+	SDL_RWops* fp;
 	SDL_Window* window;
 	bool isMouseGrabbed;
 	QUITHANDLER quitHandler;
@@ -49,15 +50,38 @@ void ReleaseMouse(DmWindow* dmW);
 */
 #ifdef DM_WINDOW_IMPLEMENTATION
 
+static void LogOutputCallback(void* userdata, int category, SDL_LogPriority priority, const char* message) {
+	SDL_RWops* fp = (SDL_RWops*)userdata;
+	size_t len = strlen(message);
+	char buff[512];
+	strcpy(buff, message);
+	buff[len] = '\n';
+	SDL_RWwrite(fp, buff, sizeof(char), len + 1);
+}
+
 int InitWindow(DmWindowParams* params, DmWindow* dmW)
 {
+#ifdef _DEBUG
+	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
+#endif // _DEBUG
+
+	dmW->fp = SDL_RWFromFile("BasicWindow.log", "w");
+	if (!dmW->fp)
+		return 1;
+
+	SDL_LogSetOutputFunction(LogOutputCallback, (void*)dmW->fp);
+
+	SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: test");
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		const char* errormsg = SDL_GetError();
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: %s\n", errormsg);
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: %s", errormsg);
+		SDL_RWclose(dmW->fp);
 		return 1;
 	}
-	SDL_Log("SDL2 initialized!!\n");
+
+	SDL_Log("SDL2 initialized!!");
 
 	Uint32 windowFlags = SDL_WINDOW_RESIZABLE;
 	if (params->api == OPENGL) {
@@ -72,26 +96,27 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 	if (!dmW->window)
 	{
 		const char* errormsg = SDL_GetError();
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: %s\n", errormsg);
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: %s", errormsg);
 		SDL_Quit();
+		SDL_RWclose(dmW->fp);
 		return 1;
 	}
-	SDL_Log("SDL2 window created!\n");
+	SDL_Log("SDL2 window created!");
 
 	/*	Video Drivers  */
 	int vidDrvCount = SDL_GetNumVideoDrivers();
-	SDL_Log("Video drivers: %d\n", vidDrvCount);
+	SDL_Log("Video drivers: %d", vidDrvCount);
 	for (int i = 0; i < vidDrvCount; i++)
 	{
-		SDL_Log("[%d]: %s\n", i, SDL_GetVideoDriver(i));
+		SDL_Log("[%d]: %s", i, SDL_GetVideoDriver(i));
 	}
 
 	/*  Video Displays  */
 	int vidDisplaysCount = SDL_GetNumVideoDisplays();
-	SDL_Log("Video displays: %d\n", vidDisplaysCount);
+	SDL_Log("Video displays: %d", vidDisplaysCount);
 	for (int i = 0; i < vidDisplaysCount; i++)
 	{
-		SDL_Log("[%d]: %s\n", i, SDL_GetDisplayName(i));
+		SDL_Log("[%d]: %s", i, SDL_GetDisplayName(i));
 	}
 
 	/*	SYSTEM INFO */
@@ -100,7 +125,7 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 	SDL_Log("CPUs: %d\tRAM: %d MB", cpus, ram);
 
 	/*	FILESYSTEM INFO  */
-	SDL_Log("Working Dir: %s\n", SDL_GetBasePath());
+	SDL_Log("Working Dir: %s", SDL_GetBasePath());
 
 	/*  EVENT HANDLERS */
 	dmW->quitHandler = NULL;
@@ -117,7 +142,8 @@ void QuitWindow(DmWindow* dmW)
 {
 	SDL_DestroyWindow(dmW->window);
 	SDL_Quit();
-	SDL_Log("SDL2 closed!!\n");
+	SDL_Log("SDL2 closed!!");
+	SDL_RWclose(dmW->fp);
 }
 
 void ProcessEvents(DmWindow* dmW, SDL_Event* event)

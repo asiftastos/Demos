@@ -10,8 +10,6 @@
 #include "demos/common/dmVec.h"
 #define DM_MAP_IMPLEMENTATION
 #include "demos/common/dmMap.h"
-#define DM_LOGGER_IMPLEMENTATION
-#include "demos/common/dmLogger.h"
 #define DM_INI_IMPLEMENTATION
 #include "demos/common/dmIni.h"
 
@@ -33,8 +31,8 @@ void handleKeyboard(SDL_KeyboardEvent* ev)
 int main(int argc, const char* argv[])
 {
 	DmWindowParams dparams = {
-		.width = 1024,
-		.height = 768,
+		.width = 800,
+		.height = 600,
 		.api = NOAPI,
 		.title = "SDL Window"
 	};
