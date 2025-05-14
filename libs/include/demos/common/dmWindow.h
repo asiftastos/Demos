@@ -4,7 +4,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include "SDL2/SDL.h"
+#include "SDL3/SDL.h"
 
 typedef enum DmGraphicsApi {
 	NOAPI,
@@ -26,7 +26,7 @@ typedef void(*MOUSEBUTTONHANDLER)(SDL_MouseButtonEvent* event);
 
 typedef struct DmWindow {
 	bool running;
-	SDL_RWops* fp;
+	SDL_IOStream* fp;
 	SDL_Window* window;
 	bool isMouseGrabbed;
 	QUITHANDLER quitHandler;
@@ -51,25 +51,25 @@ void ReleaseMouse(DmWindow* dmW);
 #ifdef DM_WINDOW_IMPLEMENTATION
 
 static void LogOutputCallback(void* userdata, int category, SDL_LogPriority priority, const char* message) {
-	SDL_RWops* fp = (SDL_RWops*)userdata;
+	SDL_IOStream* fp = (SDL_IOStream*)userdata;
 	size_t len = strlen(message);
 	char buff[512];
 	strcpy(buff, message);
 	buff[len] = '\n';
-	SDL_RWwrite(fp, buff, sizeof(char), len + 1);
+	SDL_WriteIO(fp, buff, sizeof(char) * (len + 1));
 }
 
 int InitWindow(DmWindowParams* params, DmWindow* dmW)
 {
 #ifdef _DEBUG
-	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_INFO);
+	SDL_SetLogPriorities(SDL_LOG_PRIORITY_INFO);
 #endif // _DEBUG
 
-	dmW->fp = SDL_RWFromFile("BasicWindow.log", "w");
+	dmW->fp = SDL_IOFromFile("BasicWindow.log", "w");
 	if (!dmW->fp)
 		return 1;
 
-	SDL_LogSetOutputFunction(LogOutputCallback, (void*)dmW->fp);
+	SDL_SetLogOutputFunction(LogOutputCallback, (void*)dmW->fp);
 
 	SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: test");
 
@@ -77,7 +77,7 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 	{
 		const char* errormsg = SDL_GetError();
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: %s", errormsg);
-		SDL_RWclose(dmW->fp);
+		SDL_CloseIO(dmW->fp);
 		return 1;
 	}
 
@@ -92,13 +92,13 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 		windowFlags |= SDL_WINDOW_VULKAN;
 	}
 
-	dmW->window = SDL_CreateWindow(params->title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, params->width, params->height, windowFlags);
+	dmW->window = SDL_CreateWindow(params->title, params->width, params->height, windowFlags);
 	if (!dmW->window)
 	{
 		const char* errormsg = SDL_GetError();
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[ERROR]: %s", errormsg);
 		SDL_Quit();
-		SDL_RWclose(dmW->fp);
+		SDL_CloseIO(dmW->fp);
 		return 1;
 	}
 	SDL_Log("SDL2 window created!");
@@ -112,15 +112,18 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 	}
 
 	/*  Video Displays  */
-	int vidDisplaysCount = SDL_GetNumVideoDisplays();
+	int vidDisplaysCount;
+	SDL_DisplayID* displays = SDL_GetDisplays(&vidDisplaysCount);
 	SDL_Log("Video displays: %d", vidDisplaysCount);
 	for (int i = 0; i < vidDisplaysCount; i++)
 	{
-		SDL_Log("[%d]: %s", i, SDL_GetDisplayName(i));
+		SDL_Log("[%d]: %s", i, SDL_GetDisplayName(displays[i]));
 	}
+	if(displays)
+		SDL_free(displays);
 
 	/*	SYSTEM INFO */
-	int cpus = SDL_GetCPUCount();
+	int cpus = SDL_GetNumLogicalCPUCores();
 	int ram = SDL_GetSystemRAM();
 	SDL_Log("CPUs: %d\tRAM: %d MB", cpus, ram);
 
@@ -143,7 +146,7 @@ void QuitWindow(DmWindow* dmW)
 	SDL_DestroyWindow(dmW->window);
 	SDL_Quit();
 	SDL_Log("SDL2 closed!!");
-	SDL_RWclose(dmW->fp);
+	SDL_CloseIO(dmW->fp);
 }
 
 void ProcessEvents(DmWindow* dmW, SDL_Event* event)
@@ -152,19 +155,42 @@ void ProcessEvents(DmWindow* dmW, SDL_Event* event)
 	{
 		switch (event->type)
 		{
-		case SDL_QUIT:
+		case SDL_EVENT_QUIT:
 			dmW->running = false;
 			if (dmW->quitHandler)  dmW->quitHandler();
 			break;
-		case SDL_KEYDOWN:
-		case SDL_KEYUP:
+		case SDL_EVENT_KEY_DOWN:
+		case SDL_EVENT_KEY_UP:
 			if (dmW->keyboardHandler)  dmW->keyboardHandler(&event->key);
 			break;
-		case SDL_WINDOWEVENT:
+		case SDL_EVENT_WINDOW_SHOWN:
+		case SDL_EVENT_WINDOW_HIDDEN:
+		case SDL_EVENT_WINDOW_EXPOSED:
+		case SDL_EVENT_WINDOW_MOVED:
+		case SDL_EVENT_WINDOW_RESIZED:
+		case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+		case SDL_EVENT_WINDOW_METAL_VIEW_RESIZED:
+		case SDL_EVENT_WINDOW_MINIMIZED:
+		case SDL_EVENT_WINDOW_MAXIMIZED:
+		case SDL_EVENT_WINDOW_RESTORED:
+		case SDL_EVENT_WINDOW_MOUSE_ENTER:
+		case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+		case SDL_EVENT_WINDOW_FOCUS_GAINED:
+		case SDL_EVENT_WINDOW_FOCUS_LOST:
+		case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+		case SDL_EVENT_WINDOW_HIT_TEST:
+		case SDL_EVENT_WINDOW_ICCPROF_CHANGED:
+		case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+		case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+		case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+		case SDL_EVENT_WINDOW_OCCLUDED:
+		case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
+		case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
+		case SDL_EVENT_WINDOW_DESTROYED:
 			if (dmW->windowHandler)  dmW->windowHandler(&event->window);
 			break;
-		case SDL_MOUSEBUTTONDOWN:
-		case SDL_MOUSEBUTTONUP:
+		case SDL_EVENT_MOUSE_BUTTON_DOWN:
+		case SDL_EVENT_MOUSE_BUTTON_UP:
 			if (dmW->mouseButtonHandler)  dmW->mouseButtonHandler(&event->button);
 			break;
 		default:
@@ -179,16 +205,16 @@ void GrabMouse(DmWindow* dmW)
 	SDL_GetWindowSize(dmW->window, &w, &h);
 	SDL_Rect r = (SDL_Rect){ (int)(w / 2), (int)(h / 2), 1, 1 };
 	SDL_SetWindowMouseRect(dmW->window, &r);
-	SDL_SetWindowMouseGrab(dmW->window, SDL_TRUE);
-	SDL_ShowCursor(SDL_DISABLE);
+	SDL_SetWindowMouseGrab(dmW->window, true);
+	SDL_HideCursor();
 	dmW->isMouseGrabbed = true;
 }
 
 void ReleaseMouse(DmWindow* dmW)
 {
 	SDL_SetWindowMouseRect(dmW->window, NULL);
-	SDL_SetWindowMouseGrab(dmW->window, SDL_FALSE);
-	SDL_ShowCursor(SDL_ENABLE);
+	SDL_SetWindowMouseGrab(dmW->window, false);
+	SDL_ShowCursor();
 	dmW->isMouseGrabbed = false;
 }
 
