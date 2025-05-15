@@ -26,35 +26,35 @@ void ReleaseWGPU(DmWGPU* wgpuContext);
 
 #ifdef  DM_WGPU_IMPLEMENTATION
 
-static void onAdapterRequestEnded(WGPURequestAdapterStatus status, WGPUAdapter adapter, char const* message, void* userdata)
+static void onAdapterRequestEnded(WGPURequestAdapterStatus status, WGPUAdapter adapter, WGPUStringView message, WGPU_NULLABLE void* userdata1, WGPU_NULLABLE void* userdata2)
 {
 	if (status == WGPURequestAdapterStatus_Success)
 	{
-		DmWGPU* context = (DmWGPU*)userdata;
+		DmWGPU* context = (DmWGPU*)userdata1;
 		context->adapter = adapter;
 	}
 	else
 	{
-		printf("Failed to get WGPU adapter: %s\n", message);
+		printf("Failed to get WGPU adapter: %s\n", message.data);
 	}
 }
 
-static void onDeviceRequest(WGPURequestDeviceStatus status, WGPUDevice device, char const* message, void* userdata)
+static void onDeviceRequest(WGPURequestDeviceStatus status, WGPUDevice device, WGPUStringView message, WGPU_NULLABLE void* userdata1, WGPU_NULLABLE void* userdata2)
 {
 	if (status == WGPURequestAdapterStatus_Success)
 	{
-		DmWGPU* context = (DmWGPU*)userdata;
+		DmWGPU* context = (DmWGPU*)userdata1;
 		context->device = device;
 	}
 	else
 	{
-		printf("Request device error: %s\n", message);
+		printf("Request device error: %s\n", message.data);
 	}
 }
 
-void onDeviceError(WGPUErrorType type, char const* message, void* userdata)
+void onDeviceError(WGPUDevice const* device, WGPUErrorType type, WGPUStringView message, WGPU_NULLABLE void* userdata1, WGPU_NULLABLE void* userdata2)
 {
-	printf("Device error: %s\n", message);
+	printf("Device error: %s\n", message.data);
 }
 
 const char* GetBackendType(WGPUBackendType backend)
@@ -95,8 +95,8 @@ int InitWGPU(WgpuParams gpuParams, DmWGPU* wgpuContext)
 	//surface
 	WGPUSurfaceDescriptor surfDesc = {
 		.label = NULL,
-		.nextInChain = (const WGPUChainedStruct*)&(WGPUSurfaceDescriptorFromWindowsHWND) {
-			.chain = (WGPUChainedStruct){.next = NULL, .sType = WGPUSType_SurfaceDescriptorFromWindowsHWND, },
+		.nextInChain = (const WGPUChainedStruct*)&(WGPUSurfaceSourceWindowsHWND) {
+			.chain = (WGPUChainedStruct){.next = NULL, .sType = WGPUSType_SurfaceSourceWindowsHWND, },
 			.hinstance = gpuParams.hInstance,
 			.hwnd = gpuParams.hwnd,
 		},
@@ -108,19 +108,28 @@ int InitWGPU(WgpuParams gpuParams, DmWGPU* wgpuContext)
 		.nextInChain = NULL,
 		.compatibleSurface = wgpuContext->surface,
 	};
-	wgpuInstanceRequestAdapter(wgpuContext->instance, &adapterOptions, onAdapterRequestEnded, (void*)wgpuContext);
+	WGPURequestAdapterCallbackInfo adapterCallbackInfo = {
+		.nextInChain = NULL,
+		.callback = onAdapterRequestEnded,
+		.userdata1 = wgpuContext,
+	};
+	wgpuInstanceRequestAdapter(wgpuContext->instance, &adapterOptions, adapterCallbackInfo);
 
 	printf("Got WGPU adapter at %p\n", wgpuContext->adapter);
 
 	//adapter properties
-	WGPUAdapterProperties adapterProperties = { 0 };
-	wgpuAdapterGetProperties(wgpuContext->adapter, &adapterProperties);
+	WGPUAdapterInfo adapterInfo = { 0 };
+	wgpuAdapterGetInfo(wgpuContext->adapter, &adapterInfo);
 
-	printf("Name: %s\n", adapterProperties.name);
-	printf("Vendor name: %s\n", adapterProperties.vendorName);
-	printf("Backend: %s\n", GetBackendType(adapterProperties.backendType));
+	printf("Name: %s\n", adapterInfo.description.data);
+	printf("Vendor name: %s\n", adapterInfo.vendor.data);
+	printf("Backend: %s\n", GetBackendType(adapterInfo.backendType));
 
 	//request device
+	WGPUUncapturedErrorCallbackInfo errorCallbackInfo = {
+		.nextInChain = NULL,
+		.callback = onDeviceError,
+	};
 	WGPUDeviceDescriptor devDesc = {
 		.nextInChain = NULL,
 		.label = "My device",
@@ -128,24 +137,27 @@ int InitWGPU(WgpuParams gpuParams, DmWGPU* wgpuContext)
 		.requiredLimits = NULL,
 		.defaultQueue.nextInChain = NULL,
 		.defaultQueue.label = "Default Queue",
+		.uncapturedErrorCallbackInfo = errorCallbackInfo,
 	};
-	wgpuAdapterRequestDevice(wgpuContext->adapter, &devDesc, onDeviceRequest, (void*)wgpuContext);
+	WGPURequestDeviceCallbackInfo deviceCallbackInfo = {
+		.nextInChain = NULL,
+		.callback = onDeviceRequest,
+		.userdata1 = wgpuContext,
+	};
+	wgpuAdapterRequestDevice(wgpuContext->adapter, &devDesc, deviceCallbackInfo);
 
 	printf("Got WGPU device at %p\n", wgpuContext->device);
-
-	wgpuDeviceSetUncapturedErrorCallback(wgpuContext->device, onDeviceError, NULL);
-
 
 	//get the main queue
 	wgpuContext->queue = wgpuDeviceGetQueue(wgpuContext->device);
 
 
 	//surface configuration, replaces swapchain
-	WGPUTextureFormat surfFormat = wgpuSurfaceGetPreferredFormat(wgpuContext->surface, wgpuContext->adapter);
+	//WGPUTextureFormat surfFormat = wgpuSurfaceGetPreferredFormat(wgpuContext->surface, wgpuContext->adapter);
 	wgpuSurfaceGetCapabilities(wgpuContext->surface, wgpuContext->adapter, &wgpuContext->surfCaps);
 
 	wgpuContext->surfConfig.device = wgpuContext->device;
-	wgpuContext->surfConfig.format = surfFormat;
+	wgpuContext->surfConfig.format = wgpuContext->surfCaps.formats[0];
 	wgpuContext->surfConfig.width = windowWidth;
 	wgpuContext->surfConfig.height = windowHeight;
 	wgpuContext->surfConfig.usage = WGPUTextureUsage_RenderAttachment;

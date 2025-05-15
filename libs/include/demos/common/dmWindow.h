@@ -65,7 +65,7 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 	SDL_SetLogPriorities(SDL_LOG_PRIORITY_INFO);
 #endif // _DEBUG
 
-	dmW->fp = SDL_IOFromFile("BasicWindow.log", "w");
+	dmW->fp = SDL_IOFromFile("dm.log", "w");
 	if (!dmW->fp)
 		return 1;
 

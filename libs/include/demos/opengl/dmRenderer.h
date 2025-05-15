@@ -126,7 +126,7 @@ DMRenderer* InitRenderer(DmWindow* win)
 
 void DestroyRenderer(DMRenderer* dmRenderer)
 {
-	SDL_GL_DeleteContext(dmRenderer->glContext);
+	SDL_GL_DestroyContext(dmRenderer->glContext);
 
 	if (dmRenderer)
 		free(dmRenderer);

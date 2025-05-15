@@ -33,11 +33,11 @@ SDL_GLContext glContext;
 
 void handleKeyboard(SDL_KeyboardEvent* ev)
 {
-	if (ev->keysym.sym == SDLK_ESCAPE)
+	if (ev->key == SDLK_ESCAPE)
 		dw.running = false;
-	if (ev->keysym.sym == SDLK_F1)
+	if (ev->key == SDLK_F1)
 		GrabMouse(&dw);
-	if (ev->keysym.sym == SDLK_F2)
+	if (ev->key == SDLK_F2)
 		ReleaseMouse(&dw);
 }
 
@@ -114,7 +114,7 @@ int main(int argc, const char* argv[])
 	rlglClose();
 
 	//sdl
-	SDL_GL_DeleteContext(glContext);
+	SDL_GL_DestroyContext(glContext);
 	QuitWindow(&dw);
 
 	return 0;

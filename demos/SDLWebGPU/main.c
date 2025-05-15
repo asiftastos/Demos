@@ -4,10 +4,12 @@
 * 
 */
 
+#define HINSTANCE void*
+#define HWND void*
+
 #include <stdio.h>
 #define DM_WINDOW_IMPLEMENTATION
 #include "demos/common/dmWindow.h"
-#include "SDL2/SDL_syswm.h"
 
 DmWindow dw;
 
@@ -21,11 +23,11 @@ DmWGPU dwgpu;
 
 void handleKeyboard(SDL_KeyboardEvent* ev)
 {
-	if (ev->keysym.sym == SDLK_ESCAPE)
+	if (ev->key == SDLK_ESCAPE)
 		dw.running = false;
-	if (ev->keysym.sym == SDLK_F1)
+	if (ev->key == SDLK_F1)
 		GrabMouse(&dw);
-	if (ev->keysym.sym == SDLK_F2)
+	if (ev->key == SDLK_F2)
 		ReleaseMouse(&dw);
 }
 
@@ -44,11 +46,13 @@ int main(int argc, const char* argv[])
 	dw.keyboardHandler = handleKeyboard;
 
 
-	SDL_SysWMinfo swmInfo;
-	SDL_VERSION(&swmInfo.version);
-	SDL_GetWindowWMInfo(dw.window, &swmInfo);
-	HINSTANCE hinst = swmInfo.info.win.hinstance;
-	HWND hwnd = swmInfo.info.win.window;
+	//SDL_SysWMinfo swmInfo;
+	//SDL_VERSION(&swmInfo.version);
+	//SDL_GetWindowWMInfo(dw.window, &swmInfo);
+	SDL_PropertiesID winProps = SDL_GetWindowProperties(dw.window);
+	HINSTANCE hinst = SDL_GetPointerProperty(winProps, SDL_PROP_WINDOW_WIN32_INSTANCE_POINTER, NULL);
+	HWND hwnd = SDL_GetPointerProperty(winProps, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+
 
 	WgpuParams gpuParams = {
 		.windowWidth = windowWidth,

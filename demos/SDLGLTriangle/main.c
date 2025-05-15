@@ -52,11 +52,11 @@ void createTriangle()
 
 void handleKeyboard(SDL_KeyboardEvent* ev)
 {
-	if (ev->keysym.sym == SDLK_ESCAPE)
+	if (ev->key == SDLK_ESCAPE)
 		dw.running = false;
-	if (ev->keysym.sym == SDLK_F1)
+	if (ev->key == SDLK_F1)
 		GrabMouse(&dw);
-	if (ev->keysym.sym == SDLK_F2)
+	if (ev->key == SDLK_F2)
 		ReleaseMouse(&dw);
 }
 
@@ -64,7 +64,7 @@ void handleWindow(SDL_WindowEvent* ev)
 {
 	switch (ev->type)
 	{
-	case SDL_WINDOWEVENT_RESIZED:
+	case SDL_EVENT_WINDOW_RESIZED:
 		glViewport(0, 0, ev->data1, ev->data2);
 		windowWidth = ev->data1;
 		windowHeight = ev->data2;
