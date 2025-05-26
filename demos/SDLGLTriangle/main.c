@@ -10,8 +10,8 @@
 #define DM_ASSETS_IMPLEMENTATION
 #include "demos/common/dmAssets.h"
 
-int windowWidth = 800;
-int windowHeight = 600;
+int windowWidth = 1920;
+int windowHeight = 1080;
 
 DmWindow dw;
 DMRenderer* renderer;

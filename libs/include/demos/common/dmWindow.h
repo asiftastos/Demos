@@ -59,14 +59,33 @@ static void LogOutputCallback(void* userdata, int category, SDL_LogPriority prio
 	SDL_WriteIO(fp, buff, sizeof(char) * (len + 1));
 }
 
+static int InitLog(DmWindow* dmW, const char* title) {
+	const char* ext = ".log";
+	char filename[64];
+	SDL_memset(filename, 0, sizeof(filename));
+	
+	size_t titlelen = SDL_strlen(title) + 1;
+	SDL_strlcpy(filename, title, titlelen);
+	
+	size_t extensionlen = SDL_strlen(ext) + 1;
+	SDL_strlcat(filename, ext, titlelen + extensionlen);
+
+	dmW->fp = SDL_IOFromFile(filename, "w");
+	if (!dmW->fp) {
+		const char* error = SDL_GetError();
+		printf("[IO ERROR]: %s", error);
+		return 1;
+	}
+	return 0;
+}
+
 int InitWindow(DmWindowParams* params, DmWindow* dmW)
 {
 #ifdef _DEBUG
 	SDL_SetLogPriorities(SDL_LOG_PRIORITY_INFO);
 #endif // _DEBUG
 
-	dmW->fp = SDL_IOFromFile("dm.log", "w");
-	if (!dmW->fp)
+	if(InitLog(dmW, params->title) > 0)
 		return 1;
 
 	SDL_SetLogOutputFunction(LogOutputCallback, (void*)dmW->fp);
@@ -81,7 +100,7 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 		return 1;
 	}
 
-	SDL_Log("SDL2 initialized!!");
+	SDL_Log("SDL3 initialized!!");
 
 	Uint32 windowFlags = SDL_WINDOW_RESIZABLE;
 	if (params->api == OPENGL) {
@@ -101,7 +120,7 @@ int InitWindow(DmWindowParams* params, DmWindow* dmW)
 		SDL_CloseIO(dmW->fp);
 		return 1;
 	}
-	SDL_Log("SDL2 window created!");
+	SDL_Log("SDL3 window created!");
 
 	/*	Video Drivers  */
 	int vidDrvCount = SDL_GetNumVideoDrivers();
@@ -145,7 +164,7 @@ void QuitWindow(DmWindow* dmW)
 {
 	SDL_DestroyWindow(dmW->window);
 	SDL_Quit();
-	SDL_Log("SDL2 closed!!");
+	SDL_Log("SDL3 closed!!");
 	SDL_CloseIO(dmW->fp);
 }
 
