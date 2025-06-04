@@ -120,18 +120,19 @@ int main(int argc, const char* argv[])
 	{
 		ProcessEvents(&dw, &e);
 
-		int x, y;
-		int x1, y1;
+		float x, y;
+		float x1, y1;
 		SDL_GetRelativeMouseState(&x1, &y1);
-		Uint32 buttons = SDL_GetMouseState(&x, &y);
+		SDL_MouseButtonFlags buttons = SDL_GetMouseState(&x, &y);
+		
 		HMM_Mat4 modelInverse = HMM_InvTranslate(model);
-		HMM_Vec4 mp = HMM_MulM4V4(modelInverse, HMM_V4((float)x, (float)y, 0.0f, 1.0f)); //translate mouse coords to model coords
+		HMM_Vec4 mp = HMM_MulM4V4(modelInverse, HMM_V4(x, y, 0.0f, 1.0f)); //translate mouse coords to model coords
 		if (mp.X > 0 && mp.X < 300 && mp.Y > 0 && mp.Y < 150)
 		{
 			alpha = 0.6f;
-			if (buttons & SDL_BUTTON_LMASK)
+			if ((buttons & SDL_BUTTON_LMASK) == SDL_BUTTON_LEFT)
 			{
-				//printf("[%d,%d]: %d,%d\n", x, y, x1, y1);
+				//printf("[%f,%f]: %f,%f\n", x, y, x1, y1);
 				HMM_Vec3 pmdiff = HMM_SubV3(position, HMM_V3(x, y, 0.0f));
 				pmdiff = HMM_AddV3(pmdiff, HMM_V3(x1, y1, 0.0f));
 				position = HMM_AddV3(HMM_V3(x, y, 0.0f), pmdiff);
