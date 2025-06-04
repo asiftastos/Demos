@@ -1,10 +1,26 @@
 #pragma once
 
+typedef struct DMShaderInfo {
+	const char* name;
+	const char* vertexShaderFile;
+	const char* fragmentShaderFile;
+}DMShaderInfo;
+
+typedef struct DMShader {
+	GLuint id;
+}DMShader;
+
 char* loadFileText(const char* filename, int *length);
 void freeText(char* text);
 
 unsigned int loadShader(const char* filename, int shaderType);
 unsigned int createProgram(GLuint vsh, GLuint fsh, const char* name);
+
+DMShader* newShader(DMShaderInfo* shaderInfo);
+void deleteShader(DMShader* shader);
+
+//passing NULL will unbind any shader program previously bound
+void Use(DMShader* shader);
 
 #ifdef DM_ASSETS_IMPLEMENTATION
 
@@ -136,6 +152,46 @@ unsigned int createProgram(GLuint vsh, GLuint fsh, const char* name)
 	}
 
 	return id;
+}
+
+DMShader* newShader(DMShaderInfo* shaderInfo) {
+	if (shaderInfo == NULL) {
+		SDL_Log("ShaderInfo struct must be provided\n");
+		return NULL;
+	}
+
+	unsigned int vs = loadShader(shaderInfo->vertexShaderFile, GL_VERTEX_SHADER);
+	unsigned int fs = loadShader(shaderInfo->fragmentShaderFile, GL_FRAGMENT_SHADER);
+
+	DMShader* s = (DMShader*)malloc(sizeof(DMShader));
+
+	if (s) {
+		s->id = createProgram(vs, fs, shaderInfo->name);
+
+		if(s->id > 0)
+			return s;
+	}
+
+	SDL_Log("Failed to create shader program %s\n", shaderInfo->name);
+
+	return NULL;
+}
+
+void deleteShader(DMShader* shader) {
+	if (shader) {
+		glDeleteProgram(shader->id);
+		free(shader);
+	}
+}
+
+void Use(DMShader* shader)
+{
+	GLuint id = 0;
+
+	if (shader)
+		id = shader->id;
+
+	glUseProgram(id);
 }
 
 #endif // DM_ASSETS_IMPLEMENTATION

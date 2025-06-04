@@ -19,7 +19,7 @@ DMVao vao;
 DMVertexBuffer vbo;
 DMVertexBuffer ibo;
 
-GLuint shader;
+DMShader* simple2dShader;
 
 float alpha = 1.0f;
 HMM_Vec3 position = { 100.0f, 200.0f, 0.0f };
@@ -98,10 +98,14 @@ int main(int argc, const char* argv[])
 
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-	GLuint vsh = loadShader("assets/shaders/simple2d.vert", GL_VERTEX_SHADER);
-	GLuint fsh = loadShader("assets/shaders/simple2d.frag", GL_FRAGMENT_SHADER);
-	shader = createProgram(vsh, fsh, "simple2d");
+	DMShaderInfo shaderInfo = {
+		.name = "simple2d",
+		.vertexShaderFile = "assets/shaders/simple2d.vert",
+		.fragmentShaderFile = "assets/shaders/simple2d.frag"
+	};
 
+	simple2dShader = newShader(&shaderInfo);
+	
 	createTriangle();
 
 	renderer->ortho = HMM_Orthographic_LH_NO(0.0f, (float)windowWidth, (float)windowHeight, 0.0f, 0.1f, 1.0f);
@@ -143,10 +147,11 @@ int main(int argc, const char* argv[])
 
 		BeginDraw2D();
 
-		glUseProgram(shader);
-		GLint mloc = glGetUniformLocation(shader, "model");
-		GLint ploc = glGetUniformLocation(shader, "proj");
-		GLint aloc = glGetUniformLocation(shader, "alpha");
+		Use(simple2dShader);
+
+		GLint mloc = glGetUniformLocation(simple2dShader->id, "model");
+		GLint ploc = glGetUniformLocation(simple2dShader->id, "proj");
+		GLint aloc = glGetUniformLocation(simple2dShader->id, "alpha");
 
 		glUniformMatrix4fv(mloc, 1, GL_FALSE, &model);
 		glUniformMatrix4fv(ploc, 1, GL_FALSE, &renderer->ortho);
@@ -162,7 +167,7 @@ int main(int argc, const char* argv[])
 		EndDraw(&dw);
 	}
 
-	glDeleteProgram(shader);
+	deleteShader(simple2dShader);
 
 	DeleteBuffer(&ibo);
 	DeleteBuffer(&vbo);
